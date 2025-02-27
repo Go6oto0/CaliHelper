@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "911772068262",
+    "project_id": "calihelper",
+    "storage_bucket": "calihelper.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911772068262:android:b1368e3548b6d7d66b8767",
+        "android_client_info": {
+          "package_name": "com.georgiyordanov.calihelper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRt1LQ6k7yuF3JU2S4L2B_l7rtQnpMHB8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
