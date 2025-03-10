@@ -2,8 +2,7 @@ package com.georgiyordanov.calihelper.data.models
 
 data class User(
     val role: String = "user",
-    val email: String,
-    val password: String,
+    val uid: String,
     val userName: String? = null,
     val weight: Float? = null,
     val height: Float? = null,
