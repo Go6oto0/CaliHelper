@@ -5,13 +5,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 
-class UserCrud : IRepository<User> {
+class UserRepository : IRepository<User> {
     private var db = FirebaseFirestore.getInstance()
     private var usersCollection = db.collection("users")
     private val firebaseAuth = FirebaseAuth.getInstance()
     override suspend fun create(entity: User) {
         try {
-            val documentRef = usersCollection.document()
+            val documentRef = usersCollection.document(entity.uid)
             documentRef.set(entity).await()
         } catch (e: Exception) {
             e.printStackTrace()
