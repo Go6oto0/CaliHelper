@@ -1,85 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.ExerciseDetailActivity">
 
-    <!-- Main content container -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/mainContent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!-- Exercise name/title -->
+    <TextView
+        android:id="@+id/exerciseName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Exercise Name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
 
-        <!-- Shared top bar include -->
-        <include
-            android:id="@+id/topBarInclude"
-            layout="@layout/top_bar"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Technique/description text -->
+    <TextView
+        android:id="@+id/exerciseTechnique"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Technique/Description details will appear here."
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintTop_toBottomOf="@id/exerciseName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
 
-        <!-- Exercise name/title -->
-        <TextView
-            android:id="@+id/exerciseName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Exercise Name"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/topBarInclude"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp" />
-
-        <!-- Technique/description text -->
-        <TextView
-            android:id="@+id/exerciseTechnique"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Technique/Description details will appear here."
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:layout_constraintTop_toBottomOf="@id/exerciseName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp" />
-
-        <!-- Instructions label -->
-        <TextView
-            android:id="@+id/instructionsLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Instructions:"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/exerciseTechnique"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="16dp" />
-
-        <!-- Exercise instructions -->
-        <TextView
-            android:id="@+id/exerciseInstructions"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Step by step instructions will appear here."
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            app:layout_constraintTop_toBottomOf="@id/instructionsLabel"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- Navigation drawer -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation_view"
+    <!-- Instructions label -->
+    <TextView
+        android:id="@+id/instructionsLabel"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:menu="@menu/drawer_menu" />
+        android:layout_height="wrap_content"
+        android:text="Instructions:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/exerciseTechnique"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp" />
 
-</androidx.drawerlayout.widget.DrawerLayout>
+    <!-- Exercise instructions -->
+    <TextView
+        android:id="@+id/exerciseInstructions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Step by step instructions will appear here."
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintTop_toBottomOf="@id/instructionsLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,10 @@
 package com.georgiyordanov.calihelper.data.models
 
 data class WorkoutExercise(
-    val workoutPlanId: Int,
-    val exerciseId: Int,
-    val repetitions: Int,
-    val sets: Int
+    val workoutPlanId: String = "",
+    val exerciseId: String = "",
+    val repetitions: Int = 0,
+    val sets: Int = 0
 )
+
+

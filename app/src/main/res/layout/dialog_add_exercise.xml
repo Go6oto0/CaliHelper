@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_add_exercise"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- AutoCompleteTextView for exercise names with autofill support -->
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteExercise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Select Exercise" />
+
+    <!-- Input for number of sets -->
+    <EditText
+        android:id="@+id/etSets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Number of Sets"
+        android:inputType="number"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Input for number of reps -->
+    <EditText
+        android:id="@+id/etReps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Number of Reps"
+        android:inputType="number"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

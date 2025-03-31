@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Workout Name as title -->
+        <TextView
+            android:id="@+id/tvWorkoutName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Workout Title"
+            android:textAppearance="?attr/textAppearanceHeadline6" />
+
+        <!-- Workout Description as subtitle -->
+        <TextView
+            android:id="@+id/tvWorkoutDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Workout Description"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:layout_marginTop="4dp" />
+
+        <!-- Exercises details -->
+        <TextView
+            android:id="@+id/tvWorkoutExercises"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Exercises details"
+            android:layout_marginTop="8dp" />
+
+        <!-- Buttons container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <Button
+                android:id="@+id/btnEditWorkout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Edit" />
+
+            <Button
+                android:id="@+id/btnDeleteWorkout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
