@@ -6,7 +6,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.MainActivity">
+    tools:context=".views.ExerciseSearchActivity">
 
     <!-- Main content container -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Include the shared top bar -->
         <include
             android:id="@+id/topBarInclude"
             layout="@layout/top_bar"
@@ -21,42 +22,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Welcome message -->
-        <TextView
-            android:id="@+id/tvWelcome"
-            android:layout_width="wrap_content"
+        <!-- AutoCompleteTextView for exercise search -->
+        <AutoCompleteTextView
+            android:id="@+id/searchBar"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Welcome to the Home Page!"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:hint="Search exercises..."
+            android:padding="8dp"
             app:layout_constraintTop_toBottomOf="@id/topBarInclude"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/btnProfile"
-            android:layout_marginTop="24dp" />
-
-        <!-- Button to go to profile screen -->
-        <Button
-            android:id="@+id/btnProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Go to Profile"
-            app:layout_constraintTop_toBottomOf="@id/tvWelcome"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnLogout" />
-
-        <!-- Button to log out -->
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Logout"
-            app:layout_constraintTop_toBottomOf="@id/btnProfile"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:layout_margin="16dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -6,14 +6,15 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.MainActivity">
+    tools:context=".views.ExerciseDetailActivity">
 
     <!-- Main content container -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main"
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Shared top bar include -->
         <include
             android:id="@+id/topBarInclude"
             layout="@layout/top_bar"
@@ -21,42 +22,55 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Welcome message -->
+        <!-- Exercise name/title -->
         <TextView
-            android:id="@+id/tvWelcome"
-            android:layout_width="wrap_content"
+            android:id="@+id/exerciseName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Welcome to the Home Page!"
+            android:text="Exercise Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/topBarInclude"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/btnProfile"
-            android:layout_marginTop="24dp" />
+            android:layout_marginTop="16dp" />
 
-        <!-- Button to go to profile screen -->
-        <Button
-            android:id="@+id/btnProfile"
-            android:layout_width="wrap_content"
+        <!-- Technique/description text -->
+        <TextView
+            android:id="@+id/exerciseTechnique"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Go to Profile"
-            app:layout_constraintTop_toBottomOf="@id/tvWelcome"
+            android:text="Technique/Description details will appear here."
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintTop_toBottomOf="@id/exerciseName"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnLogout" />
+            android:layout_marginTop="8dp" />
 
-        <!-- Button to log out -->
-        <Button
-            android:id="@+id/btnLogout"
+        <!-- Instructions label -->
+        <TextView
+            android:id="@+id/instructionsLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Logout"
-            app:layout_constraintTop_toBottomOf="@id/btnProfile"
+            android:text="Instructions:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/exerciseTechnique"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <!-- Exercise instructions -->
+        <TextView
+            android:id="@+id/exerciseInstructions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Step by step instructions will appear here."
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintTop_toBottomOf="@id/instructionsLabel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
