@@ -49,16 +49,18 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="24dp" />
 
-    <!-- TextView to display added exercises -->
-    <TextView
-        android:id="@+id/tvAddedExercises"
+    <!-- RecyclerView to display added exercises -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvExercises"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="No exercises added."
+        android:layout_height="0dp"
+        android:minHeight="100dp"
         app:layout_constraintTop_toBottomOf="@id/btnAddExercise"
+        app:layout_constraintBottom_toTopOf="@id/btnCreateWorkout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
     <!-- Button to create the workout -->
     <Button
@@ -66,9 +68,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Create Workout"
-        app:layout_constraintTop_toBottomOf="@id/tvAddedExercises"
+        app:layout_constraintTop_toBottomOf="@id/rvExercises"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="24dp" />
 
     <!-- ProgressBar for loading state -->

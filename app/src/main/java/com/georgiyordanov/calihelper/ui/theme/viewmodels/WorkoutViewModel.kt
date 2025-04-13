@@ -66,20 +66,86 @@ class WorkoutViewModel : ViewModel() {
         }
     }
 
+    // Existing function, returns details for a workout.
+    suspend fun fetchWorkoutDetails(workoutId: String): WorkoutPlan? {
+        val workout = workoutPlanRepository.read(workoutId)
+        Log.d("WorkoutViewModel", "Fetched workout: $workout")
+        val allExercises = workoutExerciseRepository.readAll() ?: emptyList()
+        Log.d("WorkoutViewModel", "Found ${allExercises.size} exercises in total")
+        return workout?.copy(exercises = allExercises.filter { it.workoutPlanId == workout.id })
+    }
 
+
+    // New: Fetch workout by ID and update currentWorkout.
     fun fetchWorkoutById(workoutId: String) {
+        viewModelScope.launch {
+            Log.d("WorkoutViewModel", "fetchWorkoutById called with id: $workoutId")
+            _workoutState.value = WorkoutState.Loading
+            val workout = fetchWorkoutDetails(workoutId)
+            if (workout != null) {
+                currentWorkout.value = workout
+                _workoutState.value = WorkoutState.Success
+            } else {
+                Log.e("WorkoutViewModel", "Workout not found for id: $workoutId")
+                _workoutState.value = WorkoutState.Error("Workout not found")
+            }
+        }
+    }
+
+    fun deleteWorkoutPlan(workoutId: String) {
         viewModelScope.launch {
             _workoutState.value = WorkoutState.Loading
             try {
-                currentWorkout.value = workoutPlanRepository.read(workoutId)
+                // Fetch all workout exercises.
+                val allExercises = workoutExerciseRepository.readAll() ?: emptyList()
+                // Filter exercises related to the workout plan.
+                val exercisesToDelete = allExercises.filter { it.workoutPlanId == workoutId }
+                // Delete each related exercise.
+                exercisesToDelete.forEach { ex ->
+                    workoutExerciseRepository.delete(ex.id)
+                }
+                // Delete the workout plan document.
+                workoutPlanRepository.delete(workoutId)
                 _workoutState.value = WorkoutState.Success
             } catch (e: Exception) {
-                Log.e("WorkoutViewModel", "Failed to fetch workout by ID", e)
+                Log.e("WorkoutViewModel", "Failed to delete workout plan", e)
                 _workoutState.value = WorkoutState.Error(e.message)
             }
         }
     }
 
+    // Update workout plan for editing.
+    fun updateWorkoutPlan(userId: String, workoutId: String, name: String, description: String, exercises: List<WorkoutExercise>) {
+        viewModelScope.launch {
+            _workoutState.value = WorkoutState.Loading
+            try {
+                // Update workout plan properties.
+                val updates = mapOf(
+                    "name" to name,
+                    "description" to description
+                )
+                workoutPlanRepository.update(workoutId, updates)
+
+                // Update exercises:
+                // Delete all existing exercises linked to this workout and then re-create them.
+                val existingExercises = workoutExerciseRepository.readAll()?.filter { it.workoutPlanId == workoutId } ?: emptyList()
+                existingExercises.forEach { ex ->
+                    workoutExerciseRepository.delete(ex.id)
+                }
+                exercises.forEach { exercise ->
+                    val updatedExercise = exercise.copy(workoutPlanId = workoutId)
+                    workoutExerciseRepository.create(updatedExercise)
+                }
+
+                _workoutState.value = WorkoutState.Success
+            } catch (e: Exception) {
+                Log.e("WorkoutViewModel", "Failed to update workout plan", e)
+                _workoutState.value = WorkoutState.Error(e.message)
+            }
+        }
+    }
+
+    // Original update function.
     fun updateWorkoutPlan(workoutId: String, updates: Map<String, Any?>) {
         viewModelScope.launch {
             _workoutState.value = WorkoutState.Loading
@@ -102,25 +168,25 @@ class WorkoutViewModel : ViewModel() {
         viewModelScope.launch {
             _workoutState.value = WorkoutState.Loading
             try {
-                // Generate Firestore ID for the workout plan
-                val workoutPlanId = FirebaseFirestore.getInstance()
+                // Generate a new doc reference to get the auto-generated id.
+                val docRef = FirebaseFirestore.getInstance()
                     .collection("workoutPlans")
                     .document()
-                    .id
+                val workoutPlanId = docRef.id
 
-                // Create WorkoutPlan model
+                // Create the WorkoutPlan model with the generated id.
                 val workoutPlan = WorkoutPlan(
                     id = workoutPlanId,
                     userId = userId,
                     name = name,
                     description = description,
-                    exercises = emptyList() // Store exercises separately
+                    exercises = emptyList() // Exercises are stored separately.
                 )
 
-                // Save the workout plan first
+                // Save the workout plan.
                 workoutPlanRepository.create(workoutPlan)
 
-                // Save each exercise with the generated workout ID
+                // For each workout exercise, update the workoutPlanId and then save.
                 exercises.forEach { exercise ->
                     val linkedExercise = exercise.copy(workoutPlanId = workoutPlanId)
                     workoutExerciseRepository.create(linkedExercise)
@@ -133,6 +199,7 @@ class WorkoutViewModel : ViewModel() {
             }
         }
     }
+
 }
 
 sealed class WorkoutState {
