@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/food_detail_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".views.FoodDetailActivity">
+
+    <!-- Food thumbnail -->
+    <ImageView
+        android:id="@+id/ivFoodPhoto"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/hamburger_menu"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- Food Name -->
+    <TextView
+        android:id="@+id/tvFoodNameDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Food Name"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        app:layout_constraintStart_toEndOf="@id/ivFoodPhoto"
+        app:layout_constraintTop_toTopOf="@id/ivFoodPhoto"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"/>
+
+    <!-- Serving Unit and Base Serving Quantity -->
+    <TextView
+        android:id="@+id/tvServingInfoDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Serving: X (Y unit)"
+        app:layout_constraintTop_toBottomOf="@id/tvFoodNameDetail"
+        app:layout_constraintStart_toStartOf="@id/tvFoodNameDetail"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Custom Serving Size Input Label -->
+    <TextView
+        android:id="@+id/tvCustomServingLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter Serving Size:"
+        app:layout_constraintTop_toBottomOf="@id/ivFoodPhoto"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Custom Serving Size EditText -->
+    <EditText
+        android:id="@+id/etCustomServing"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="e.g., 2.5"
+        app:layout_constraintTop_toBottomOf="@id/tvCustomServingLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Calculate Button -->
+    <Button
+        android:id="@+id/btnCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calculate"
+        app:layout_constraintTop_toBottomOf="@id/etCustomServing"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Total Calories -->
+    <TextView
+        android:id="@+id/tvTotalCalories"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Total Calories: "
+        app:layout_constraintTop_toBottomOf="@id/btnCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Total Carbohydrates -->
+    <TextView
+        android:id="@+id/tvTotalCarbs"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Total Carbohydrates: "
+        app:layout_constraintTop_toBottomOf="@id/tvTotalCalories"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Total Fats -->
+    <TextView
+        android:id="@+id/tvTotalFats"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Total Fats: "
+        app:layout_constraintTop_toBottomOf="@id/tvTotalCarbs"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Total Protein -->
+    <TextView
+        android:id="@+id/tvTotalProtein"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Total Protein: "
+        app:layout_constraintTop_toBottomOf="@id/tvTotalFats"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Optionally, add a button to add the item to your log -->
+    <Button
+        android:id="@+id/btnAddFoodToLog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add to Log"
+        app:layout_constraintTop_toBottomOf="@id/tvTotalProtein"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

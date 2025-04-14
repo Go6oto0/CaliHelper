@@ -12,6 +12,7 @@ data class Exercise(
     val equipments: List<String>,
     val secondaryMuscles: List<String>
 ) : Serializable
+
 data class ExercisesApiResponse(
     val success: Boolean,
     val data: ExercisesData
