@@ -9,12 +9,31 @@
     android:background="?attr/colorPrimary"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <ImageButton
-        android:id="@+id/hamburger_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/hamburger_menu"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/menu" />
-</androidx.appcompat.widget.Toolbar>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <!-- Hamburger button on the left -->
+        <ImageButton
+            android:id="@+id/hamburger_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/hamburger_menu"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/menu" />
+
+        <!-- Logout button on the right -->
+        <ImageButton
+            android:id="@+id/logout_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/logout_button"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Logout" />
+    </RelativeLayout>
+</androidx.appcompat.widget.Toolbar>

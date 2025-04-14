@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Main Items (Top) --><!-- Main Items (Top) -->
     <item
         android:id="@+id/nav_exercises"
-        android:title="Exercises" />
+        android:title="Exercises"
+        android:orderInCategory="1" />
+
     <item
         android:id="@+id/nav_calorie_tracker"
-        android:title="Calorie Tracker" />
+        android:title="Calorie Tracker"
+        android:orderInCategory="2" />
+
+    <item
+        android:id="@+id/nav_meals"
+        android:title="Meals"
+        android:orderInCategory="3" />
+
     <item
         android:id="@+id/nav_workouts"
-        android:title="Workouts" />
+        android:title="Workouts"
+        android:orderInCategory="4" />
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Profile"
+        android:orderInCategory="5" />
+    <item
+        android:id="@+id/nav_registered_users"
+        android:title="Registered Users"
+        android:orderInCategory="8" />
+
 </menu>

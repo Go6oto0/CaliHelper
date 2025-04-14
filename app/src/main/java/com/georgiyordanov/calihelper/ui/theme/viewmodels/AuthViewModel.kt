@@ -40,6 +40,15 @@ class AuthViewModel : ViewModel() {
             }
             }
         }
+    fun logout() {
+        FirebaseAuth.getInstance().signOut()
+    }
+    fun isUserAdmin(): Boolean {
+        val currentUser = authRepository.getCurrentUser()
+        // Check for a specific email as a simple example.
+        return currentUser?.email?.equals("georgiyordanov_17b@schoolmath.eu", ignoreCase = true) ?: false
+    }
+
 
 
     fun isUserLoggedIn(): Boolean = authRepository.getCurrentUser() != null

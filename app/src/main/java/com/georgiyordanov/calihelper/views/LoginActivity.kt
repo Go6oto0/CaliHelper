@@ -4,49 +4,43 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.georgiyordanov.calihelper.databinding.ActivityLoginBinding
 import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthState
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthViewModel
 import kotlinx.coroutines.launch
 
+class LoginActivity : BasicActivity() {
+    private lateinit var loginBinding: ActivityLoginBinding
 
-class LoginActivity : AppCompatActivity() {
-    private val viewModel: AuthViewModel by viewModels()
-    private lateinit var binding: ActivityLoginBinding
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            enableEdgeToEdge()
-            binding = ActivityLoginBinding.inflate(layoutInflater)
-            setContentView(binding.root)
-        /*setContentView(R.layout.activity_login)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }*/
-            setupObservers()
-            setupClickListeners()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Inflate the login layout
+        loginBinding = ActivityLoginBinding.inflate(layoutInflater)
+        // Insert it into the content frame defined in BasicActivity
+        basicBinding.contentFrame.removeAllViews() // clear any existing views
+        basicBinding.contentFrame.addView(loginBinding.root)
+
+        setupObservers()
+        setupClickListeners()
     }
+
     private fun setupClickListeners() {
-        binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString().trim()
-            val password = binding.etPassword.text.toString().trim()
-            viewModel.signIn(email, password)
+        loginBinding.btnLogin.setOnClickListener {
+            val email = loginBinding.etEmail.text.toString().trim()
+            val password = loginBinding.etPassword.text.toString().trim()
+            // Use the inherited authViewModel for signing in.
+            authViewModel.signIn(email, password)
         }
-
     }
+
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.authState.collect { state ->
+                authViewModel.authState.collect { state ->
                     when (state) {
-                        AuthState.Loading -> binding.progressBar.visibility = View.VISIBLE
+                        AuthState.Loading -> loginBinding.progressBar.visibility = View.VISIBLE
                         AuthState.Success -> handleSuccess()
                         is AuthState.Error -> showError(state.message)
                         else -> Unit
@@ -55,16 +49,16 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun handleSuccess() {
-        binding.progressBar.visibility = View.GONE
-        startActivity(Intent(this, MainActivity::class.java))
+        loginBinding.progressBar.visibility = View.GONE
         Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun showError(message: String?) {
-        binding.progressBar.visibility = View.GONE
+        loginBinding.progressBar.visibility = View.GONE
         Toast.makeText(this, message ?: "Error occurred", Toast.LENGTH_SHORT).show()
     }
-
-
 }

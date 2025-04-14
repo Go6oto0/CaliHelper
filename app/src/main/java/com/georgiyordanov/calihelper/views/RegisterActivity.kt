@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,34 +14,34 @@ import com.georgiyordanov.calihelper.R
 import com.georgiyordanov.calihelper.data.models.User
 import com.georgiyordanov.calihelper.databinding.ActivityRegisterBinding
 import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthState
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthViewModel
 import com.georgiyordanov.calihelper.ui.theme.viewmodels.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
-class RegisterActivity : AppCompatActivity() {
-    private val authViewModel: AuthViewModel by viewModels()
+class RegisterActivity : BasicActivity() {
+    // Reuse the protected authViewModel from BasicActivity.
+    // Instantiate a separate UserViewModel for registration details.
     private val userViewModel: UserViewModel by viewModels()
-    private lateinit var binding: ActivityRegisterBinding
+    private lateinit var registerBinding: ActivityRegisterBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityRegisterBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }*/
-        setupObservers()
+        // Inflate the registration layout.
+        registerBinding = ActivityRegisterBinding.inflate(layoutInflater)
+        // Insert the register view into the dynamic container within BasicActivity.
+        basicBinding.contentFrame.removeAllViews()
+        basicBinding.contentFrame.addView(registerBinding.root)
         setupClickListeners()
+        setupObservers()
     }
-    // Add in onCreate after setContentView
+
     private fun setupClickListeners() {
-        binding.btnRegister.setOnClickListener {
-            val email = binding.etEmail.text.toString().trim()
-            val password = binding.etPassword.text.toString().trim()
+        registerBinding.btnRegister.setOnClickListener {
+            val email = registerBinding.etEmail.text.toString().trim()
+            val password = registerBinding.etPassword.text.toString().trim()
             if (validateInput(email, password)) {
+                // Use inherited authViewModel to sign up the user.
                 authViewModel.signUp(email, password)
             }
         }
@@ -67,7 +66,7 @@ class RegisterActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 authViewModel.authState.collect { state ->
                     when (state) {
-                        AuthState.Loading -> binding.progressBar.visibility = View.VISIBLE
+                        AuthState.Loading -> registerBinding.progressBar.visibility = View.VISIBLE
                         AuthState.Success -> handleSuccess()
                         is AuthState.Error -> showError(state.message)
                         else -> Unit
@@ -75,21 +74,23 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
+        // Check if already logged in and then redirect to MainActivity.
         if (authViewModel.isUserLoggedIn()) {
             startActivity(Intent(this, MainActivity::class.java))
-            finish() // Optional: Close RegisterActivity
+            finish()
         }
     }
 
     private fun handleSuccess() {
-        binding.progressBar.visibility = View.GONE
+        registerBinding.progressBar.visibility = View.GONE
         createUserProfile()
-        startActivity(Intent(this, MainActivity::class.java))
         Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun showError(message: String?) {
-        binding.progressBar.visibility = View.GONE
+        registerBinding.progressBar.visibility = View.GONE
         Toast.makeText(this, message ?: "Error occurred", Toast.LENGTH_SHORT).show()
     }
 
@@ -98,8 +99,8 @@ class RegisterActivity : AppCompatActivity() {
         if (currentUser != null) {
             val user = User(
                 uid = currentUser.uid
+                // Add additional fields as necessary.
             )
-            // Call your view model's createUser method
             userViewModel.createUser(user)
         } else {
             showError("User not found")
