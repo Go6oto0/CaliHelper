@@ -13,20 +13,24 @@ import java.io.InputStream
 
 @GlideModule
 class CustomGlideModule : AppGlideModule() {
-    override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
-        // Build an OkHttpClient that adds both User-Agent and Referer headers.
+    override fun registerComponents(
+        context: Context,
+        glide: Glide,
+        registry: Registry
+    ) {
+        // OkHttpClient that adds User-Agent and Referer headers
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val original = chain.request()
-                val newRequest: Request = original.newBuilder()
+                val newReq: Request = original.newBuilder()
                     .header("User-Agent", "CaliHelperApp/1.0")
-                    // Update the Referer header to match the CDN domain.
                     .header("Referer", "https://cdn-exercisedb.vercel.app")
                     .build()
-                chain.proceed(newRequest)
+                chain.proceed(newReq)
             }
             .build()
 
+        // Tell Glide to use OkHttp for all GlideUrl loads
         registry.replace(
             GlideUrl::class.java,
             InputStream::class.java,
