@@ -27,6 +27,16 @@
         android:title="Profile"
         android:orderInCategory="5" />
     <item
+        android:id="@+id/nav_login"
+        android:title="Login"
+        android:orderInCategory="6"
+        android:visible="false" />
+    <item
+        android:id="@+id/nav_register"
+        android:title="Register"
+        android:orderInCategory="7"
+        android:visible="false" />
+    <item
         android:id="@+id/nav_registered_users"
         android:title="Registered Users"
         android:orderInCategory="8" />
