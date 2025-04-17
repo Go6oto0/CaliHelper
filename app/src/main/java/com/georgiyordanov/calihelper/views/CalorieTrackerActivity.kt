@@ -5,12 +5,20 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import com.georgiyordanov.calihelper.data.models.CommonFood
+import com.georgiyordanov.calihelper.data.models.User
 import com.georgiyordanov.calihelper.databinding.ActivityCalorieTrackerBinding
 import com.georgiyordanov.calihelper.viewmodels.CalorieTrackerViewModel
 import com.georgiyordanov.calihelper.viewmodels.FoodSearchViewModel
@@ -22,12 +30,8 @@ class CalorieTrackerActivity : BasicActivity() {
     private val calorieTrackerViewModel: CalorieTrackerViewModel by viewModels()
     private val foodSearchViewModel: FoodSearchViewModel by viewModels()
 
-    // AutoCompleteTextView adapter for dropdown suggestions.
     private lateinit var suggestionsAdapter: ArrayAdapter<String>
-    // Map to store food name to its details for quick retrieval.
     private val commonFoodMap = mutableMapOf<String, CommonFood>()
-
-    // Adapter for FoodItems list (the items in your calorie log)
     private lateinit var foodItemAdapter: FoodItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,41 +39,51 @@ class CalorieTrackerActivity : BasicActivity() {
         binding = ActivityCalorieTrackerBinding.inflate(layoutInflater)
         basicBinding.contentFrame.addView(binding.root)
 
-        // Setup autocomplete adapter.
-        suggestionsAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, mutableListOf())
+        // 1) Maintenance info placeholder
+        binding.tvMaintenanceInfo.apply {
+            text = "Loading maintenance calories…"
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        }
+
+        // 2) Food‑search dropdown
+        suggestionsAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            mutableListOf<String>()
+        )
         binding.autoCompleteSearch.setAdapter(suggestionsAdapter)
 
-        // Setup FoodItems RecyclerView adapter.
+        // 3) Food‑log RecyclerView
         foodItemAdapter = FoodItemAdapter()
-        binding.rvFoodItems.layoutManager = LinearLayoutManager(this)
-        binding.rvFoodItems.adapter = foodItemAdapter
+        binding.rvFoodItems.apply {
+            layoutManager = LinearLayoutManager(this@CalorieTrackerActivity)
+            adapter = foodItemAdapter
+        }
 
         setupObservers()
         setupListeners()
+        fetchAndShowMaintenance()
     }
+
     override fun onResume() {
         super.onResume()
-        // If needed, you can trigger a refresh.
-        // For instance, you could call a refresh function in your ViewModel,
-        // or simply re-set the adapter's list from the currently observed _calorieLog.value.
         calorieTrackerViewModel.refreshCalorieLog()
-        calorieTrackerViewModel.calorieLog.value?.let {
-            foodItemAdapter.submitList(it.foodItems)
-            binding.tvCaloriesConsumed.text = "Consumed: ${it.foodItems.sumOf { food -> food.calories }}"
+        calorieTrackerViewModel.calorieLog.value?.let { log ->
+            binding.tvCaloriesConsumed.text =
+                "Consumed: ${log.foodItems.sumOf { it.calories }} kcal"
+            foodItemAdapter.submitList(log.foodItems)
         }
     }
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun setupObservers() {
-        // Observe changes to the CalorieLog.
-        calorieTrackerViewModel.calorieLog.observe(this) { log ->
-            // Calculate the sum of calories from the food items array.
-            val sumCalories = log.foodItems.sumOf { it.calories }
-            binding.tvCaloriesConsumed.text = "Consumed: $sumCalories"
 
-            // Update the FoodItems list in the RecyclerView.
+    private fun setupObservers() {
+        // Update consumed total when log changes
+        calorieTrackerViewModel.calorieLog.observe(this) { log ->
+            val sum = log.foodItems.sumOf { it.calories }
+            binding.tvCaloriesConsumed.text = "Consumed: $sum kcal"
             foodItemAdapter.submitList(log.foodItems)
         }
 
+        // Update suggestions dropdown
         foodSearchViewModel.searchResults.observe(this) { results ->
             suggestionsAdapter.clear()
             commonFoodMap.clear()
@@ -81,33 +95,82 @@ class CalorieTrackerActivity : BasicActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupListeners() {
-        // Listen for text changes in the AutoCompleteTextView.
+        // As‑you‑type search
         binding.autoCompleteSearch.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) { }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString().trim()
-                if (query.isNotEmpty()) {
-                    foodSearchViewModel.searchFood(query)
-                }
+                val q = s?.toString()?.trim().orEmpty()
+                if (q.isNotBlank()) foodSearchViewModel.searchFood(q)
             }
         })
 
-        // When a dropdown suggestion is clicked.
-        binding.autoCompleteSearch.setOnItemClickListener { parent, view, position, id ->
-            val selectedFoodName = parent.getItemAtPosition(position) as String
-            val selectedFood = commonFoodMap[selectedFoodName]
-            if (selectedFood != null) {
-                val intent = Intent(this, FoodDetailActivity::class.java)
-                intent.putExtra("selectedFood", selectedFood)
-                // Pass the current log document ID from calorieTrackerViewModel.
-                intent.putExtra("logDocId", calorieTrackerViewModel.currentLogDocumentId)
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "Food item details not found", Toast.LENGTH_SHORT).show()
+        // On‑select → go to details
+        binding.autoCompleteSearch.setOnItemClickListener { parent, _, pos, _ ->
+            val name = parent.getItemAtPosition(pos) as String
+            commonFoodMap[name]?.let { food ->
+                startActivity(Intent(this, FoodDetailActivity::class.java).apply {
+                    putExtra("selectedFood", food)
+                    putExtra("logDocId", calorieTrackerViewModel.currentLogDocumentId)
+                })
+            } ?: Toast.makeText(this, "Food details not found", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /** Fetch the user’s profile, compute maintenance cals, and show it. */
+    private fun fetchAndShowMaintenance() {
+        val fbUser = FirebaseAuth.getInstance().currentUser ?: return
+        val db = FirebaseFirestore.getInstance()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val snap = db.collection("users")
+                .document(fbUser.uid)
+                .get()
+                .await()
+            val user = snap.toObject(User::class.java)
+
+            binding.tvMaintenanceInfo.text = when {
+                user == null -> "Unable to load profile data."
+                user.gender == null ->
+                    "Please set your gender in your profile to calculate maintenance calories."
+                user.weight == null || user.height == null || user.age == null ->
+                    "Please complete weight, height, and age in your profile."
+                else -> {
+                    val mCal = calculateMaintenance(
+                        gender   = if (user.gender.equals("male", true)) Gender.MALE else Gender.FEMALE,
+                        weightKg = user.weight,
+                        heightCm = user.height,
+                        ageYears = user.age
+                    ).toInt()
+                    buildString {
+                        append("Based on your stats, your maintenance calories are approx. ")
+                        append("$mCal kcal/day.\n\n")
+                        append("Example activities burned:\n")
+                        append("• Running (15 min): ~150 kcal\n")
+                        append("• Brisk walking (30 min): ~120 kcal\n")
+                        append("• Cycling (30 min): ~250 kcal\n")
+                        append("• Swimming (30 min): ~200 kcal")
+                    }
+                }
             }
         }
     }
+
+    /** Mifflin–St Jeor formula × activity factor (default = lightly‑active 1.375). */
+    private fun calculateMaintenance(
+        gender: Gender,
+        weightKg: Float,
+        heightCm: Float,
+        ageYears: Int,
+        activityFactor: Double = 1.375
+    ): Double {
+        val bmr = when (gender) {
+            Gender.MALE   -> 10 * weightKg + 6.25 * heightCm - 5 * ageYears + 5
+            Gender.FEMALE -> 10 * weightKg + 6.25 * heightCm - 5 * ageYears - 161
+        }
+        return bmr * activityFactor
+    }
+
+    enum class Gender { MALE, FEMALE }
 }

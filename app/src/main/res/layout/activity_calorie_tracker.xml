@@ -4,9 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/calorie_tracker_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".views.CalorieTrackerActivity">
+    android:layout_height="match_parent">
+
+    <!-- MAINTENANCE INFO: new -->
+    <TextView
+        android:id="@+id/tvMaintenanceInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Loading maintenance calories…"
+        android:padding="16dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Daily totals -->
     <TextView
@@ -14,26 +24,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Consumed: 0"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="16dp"/>
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvMaintenanceInfo"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <!-- Autocomplete Search Field -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/tvCaloriesConsumed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp">
+        app:layout_constraintEnd_toEndOf="parent">
+
         <AutoCompleteTextView
             android:id="@+id/autoCompleteSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search food..."/>
+            android:hint="Search food…"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- RecyclerView to display FoodItems -->
@@ -41,10 +52,9 @@
         android:id="@+id/rvFoodItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="16dp"
         app:layout_constraintTop_toBottomOf="@id/textInputLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="16dp"/>
-
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
