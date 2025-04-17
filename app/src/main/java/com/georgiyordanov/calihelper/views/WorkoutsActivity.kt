@@ -3,16 +3,20 @@ package com.georgiyordanov.calihelper.views
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.georgiyordanov.calihelper.databinding.ActivityWorkoutsBinding
 import com.georgiyordanov.calihelper.ui.theme.viewmodels.WorkoutState
 import com.georgiyordanov.calihelper.ui.theme.viewmodels.WorkoutViewModel
 import com.georgiyordanov.calihelper.views.adapters.WorkoutAdapter
+import com.georgiyordanov.calihelper.data.models.WorkoutPlan
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class WorkoutsActivity : BasicActivity() {
 
@@ -20,113 +24,108 @@ class WorkoutsActivity : BasicActivity() {
     private val workoutViewModel: WorkoutViewModel by viewModels()
     private lateinit var workoutAdapter: WorkoutAdapter
 
+    // When true, the next WorkoutState.Success corresponds to our pending delete
+    private var pendingDelete = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWorkoutsBinding.inflate(layoutInflater)
         basicBinding.contentFrame.addView(binding.root)
 
-        // Initialize and attach the adapter.
+        // 1) RecyclerView + adapter
         workoutAdapter = WorkoutAdapter(
-            emptyList(),
-            onEdit = { workout ->
-                startActivity(Intent(this, EditWorkoutActivity::class.java).apply {
-                    putExtra("WORKOUT_ID", workout.id)
-                })
+            workouts = emptyList(),
+            onEdit   = { workout ->
+                startActivity(Intent(this, EditWorkoutActivity::class.java)
+                    .apply { putExtra("WORKOUT_ID", workout.id) })
             },
-            onDelete = { workout ->
-                showDeleteConfirmation(workout)
-            }
+            onDelete = { workout -> confirmDelete(workout) }
         )
-        binding.recyclerWorkouts.adapter = workoutAdapter
-        binding.recyclerWorkouts.layoutManager = LinearLayoutManager(this)
+        binding.recyclerWorkouts.apply {
+            adapter = workoutAdapter
+            layoutManager = LinearLayoutManager(this@WorkoutsActivity)
+        }
 
+        // 2) Observe the flows
         setupObservers()
-        setupListeners()
 
-        // Get the current user's id.
-        val userId = getUserId()
-        // Fetch workouts and exercise names.
-        workoutViewModel.fetchUserWorkouts(userId)
+        // 3) “Create” button
+        binding.btnCreateWorkout.setOnClickListener {
+            startActivity(Intent(this, CreateWorkoutActivity::class.java))
+        }
+
+        // 4) Initial load
+        refreshWorkouts()
         workoutViewModel.fetchExerciseNames()
     }
 
     override fun onResume() {
         super.onResume()
-        val userId = getUserId()
-        workoutViewModel.fetchUserWorkouts(userId)
+        // In case we returned from edit/create
+        refreshWorkouts()
     }
 
     private fun setupObservers() {
-        // Observe workouts list and update RecyclerView.
-        lifecycleScope.launchWhenStarted {
-            workoutViewModel.workouts.collectLatest { workouts ->
-                if (workouts.isEmpty()) {
-                    binding.tvNoWorkouts.visibility = View.VISIBLE
-                    binding.recyclerWorkouts.visibility = View.GONE
-                } else {
-                    binding.tvNoWorkouts.visibility = View.GONE
-                    binding.recyclerWorkouts.visibility = View.VISIBLE
-                    workoutAdapter.submitList(workouts)
+        // A) Workouts list → adapter
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                workoutViewModel.workouts.collectLatest { list ->
+                    if (list.isEmpty()) {
+                        binding.tvNoWorkouts.visibility = View.VISIBLE
+                        binding.recyclerWorkouts.visibility = View.GONE
+                    } else {
+                        binding.tvNoWorkouts.visibility = View.GONE
+                        binding.recyclerWorkouts.visibility = View.VISIBLE
+                        workoutAdapter.submitList(list)
+                    }
                 }
             }
         }
 
-        // Observe workout state to show/hide progress bar.
-        lifecycleScope.launchWhenStarted {
-            workoutViewModel.workoutState.collectLatest { state ->
-                when (state) {
-                    is WorkoutState.Loading -> binding.progressBar.visibility = View.VISIBLE
-                    is WorkoutState.Success -> binding.progressBar.visibility = View.GONE
-                    is WorkoutState.Error -> binding.progressBar.visibility = View.GONE
-                    else -> binding.progressBar.visibility = View.GONE
+        // B) Loading / error and delete‑completion hook
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                workoutViewModel.workoutState.collectLatest { state ->
+                    // show/hide progress
+                    binding.progressBar.visibility =
+                        if (state is WorkoutState.Loading) View.VISIBLE else View.GONE
+
+                    // if we were waiting on a delete, and now it's success...
+                    if (pendingDelete && state is WorkoutState.Success) {
+                        pendingDelete = false
+                        refreshWorkouts()
+                    }
                 }
             }
         }
 
-        // Observe exercise names and update adapter's reference.
-        lifecycleScope.launchWhenStarted {
-            workoutViewModel.exerciseNames.collectLatest { exerciseNamesList ->
-                workoutAdapter.updateExerciseNames(exerciseNamesList)
+        // C) Exercise names → adapter
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                workoutViewModel.exerciseNames.collectLatest {
+                    workoutAdapter.updateExerciseNames(it)
+                }
             }
         }
     }
 
-    private fun setupListeners() {
-        binding.btnCreateWorkout.setOnClickListener {
-            startActivity(Intent(this, CreateWorkoutActivity::class.java))
+    private fun refreshWorkouts() {
+        FirebaseAuth.getInstance().currentUser?.uid?.let { uid ->
+            workoutViewModel.fetchUserWorkouts(uid)
         }
     }
 
-    private fun getUserId(): String {
-        return FirebaseAuth.getInstance().currentUser?.uid ?: "defaultUser"
-    }
-
-    // Delete confirmation dialog that calls deleteWorkoutPlan() and updates the UI list.
-    private fun showDeleteConfirmation(workout: com.georgiyordanov.calihelper.data.models.WorkoutPlan) {
+    private fun confirmDelete(workout: WorkoutPlan) {
         AlertDialog.Builder(this)
-            .setTitle("Delete Workout")
+            .setTitle("Delete “${workout.name}”?")
             .setMessage("Are you sure you want to delete this workout?")
             .setPositiveButton("Delete") { dialog, _ ->
+                dialog.dismiss()
+                // mark pending, then invoke delete
+                pendingDelete = true
                 workoutViewModel.deleteWorkoutPlan(workout.id)
-
-                // Manually update the list from the current workouts state.
-                // Note: workouts.value comes from a StateFlow, so it may not be updated instantly.
-                val updatedList = workoutViewModel.workouts.value.filter { it.id != workout.id }
-                workoutAdapter.submitList(updatedList)
-
-                if (updatedList.isEmpty()) {
-                    binding.tvNoWorkouts.visibility = View.VISIBLE
-                    binding.recyclerWorkouts.visibility = View.GONE
-                } else {
-                    binding.tvNoWorkouts.visibility = View.GONE
-                    binding.recyclerWorkouts.visibility = View.VISIBLE
-                }
-                dialog.dismiss()
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
+            .setNegativeButton("Cancel", null)
             .show()
     }
 }
