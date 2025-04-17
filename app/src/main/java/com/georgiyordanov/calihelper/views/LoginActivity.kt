@@ -16,10 +16,9 @@ class LoginActivity : BasicActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Inflate the login layout
+        // Inflate and swap in the login layout
         loginBinding = ActivityLoginBinding.inflate(layoutInflater)
-        // Insert it into the content frame defined in BasicActivity
-        basicBinding.contentFrame.removeAllViews() // clear any existing views
+        basicBinding.contentFrame.removeAllViews()
         basicBinding.contentFrame.addView(loginBinding.root)
 
         setupObservers()
@@ -30,35 +29,56 @@ class LoginActivity : BasicActivity() {
         loginBinding.btnLogin.setOnClickListener {
             val email = loginBinding.etEmail.text.toString().trim()
             val password = loginBinding.etPassword.text.toString().trim()
-            // Use the inherited authViewModel for signing in.
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             authViewModel.signIn(email, password)
         }
     }
 
     private fun setupObservers() {
         lifecycleScope.launch {
+            // Only collect when at least STARTED
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 authViewModel.authState.collect { state ->
                     when (state) {
-                        AuthState.Loading -> loginBinding.progressBar.visibility = View.VISIBLE
-                        AuthState.Success -> handleSuccess()
-                        is AuthState.Error -> showError(state.message)
-                        else -> Unit
+                        AuthState.Loading -> {
+                            loginBinding.progressBar.visibility = View.VISIBLE
+                            setInputsEnabled(false)
+                        }
+                        AuthState.Success -> {
+                            loginBinding.progressBar.visibility = View.GONE
+                            setInputsEnabled(true)
+                            handleSuccess()
+                        }
+                        is AuthState.Error -> {
+                            loginBinding.progressBar.visibility = View.GONE
+                            setInputsEnabled(true)
+                            showError(state.message)
+                        }
+                        else -> {
+                            // Idle: no-op
+                        }
                     }
                 }
             }
         }
     }
 
+    private fun setInputsEnabled(enabled: Boolean) {
+        loginBinding.etEmail.isEnabled = enabled
+        loginBinding.etPassword.isEnabled = enabled
+        loginBinding.btnLogin.isEnabled = enabled
+    }
+
     private fun handleSuccess() {
-        loginBinding.progressBar.visibility = View.GONE
-        Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
     private fun showError(message: String?) {
-        loginBinding.progressBar.visibility = View.GONE
-        Toast.makeText(this, message ?: "Error occurred", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, message ?: "Login failed", Toast.LENGTH_LONG).show()
     }
 }

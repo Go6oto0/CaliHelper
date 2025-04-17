@@ -1,8 +1,14 @@
 package com.georgiyordanov.calihelper.ui.theme.viewmodels
 
+import android.util.Log
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.georgiyordanov.calihelper.data.models.User
 import com.georgiyordanov.calihelper.data.repository.AuthRepository
+import androidx.activity.viewModels
+import com.georgiyordanov.calihelper.data.repository.UserRepository
+import com.georgiyordanov.calihelper.viewmodels.CalorieTrackerViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -12,6 +18,7 @@ import kotlinx.coroutines.tasks.await
 
 class AuthViewModel : ViewModel() {
     private val authRepository = AuthRepository()
+    private val userRepository = UserRepository()
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
@@ -19,27 +26,52 @@ class AuthViewModel : ViewModel() {
     fun signUp(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            try {
-                authRepository.signUp(email, password) // Assume this throws an exception on failure
-                _authState.value = AuthState.Success
-            } catch (e: Exception) {
-                _authState.value = AuthState.Error(e.message)
-            }
+
+            val result = authRepository.signUp(email, password)
+            if (result.isSuccess) {
+                val fbUser = result.getOrNull()!!
+                val appUser = User(
+                    uid = fbUser.uid,
+                    email = fbUser.email,       // non-null after successful sign-up
+                    profileSetup = false
+                )
+
+                try {
+                    Log.d("APPUSER_BEFORE_CREATE", appUser.toString())
+                    userRepository.create(appUser)    // full write
+                    _authState.value = AuthState.Success
+                } catch (e: Exception) {
+                    _authState.value = AuthState.Error(e.message)
+                }
+            } else {
+                _authState.value = AuthState.Error(result.exceptionOrNull()?.message)
             }
         }
+    }
 
 
+
+
+    // AuthViewModel.kt
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            try {
-                authRepository.signIn(email, password) // Assume this throws an exception on failure
+
+            // Call the suspend function and get a Result<Unit>
+            val result = authRepository.signIn(email, password)
+
+            if (result.isSuccess) {
+                // credentials were correct
                 _authState.value = AuthState.Success
-            } catch (e: Exception) {
-                _authState.value = AuthState.Error(e.message)
-            }
+            } else {
+                // credentials failed: get the exception message
+                val message = result.exceptionOrNull()?.message
+                    ?: "Unknown login error"
+                _authState.value = AuthState.Error(message)
             }
         }
+    }
+
     fun logout() {
         FirebaseAuth.getInstance().signOut()
     }

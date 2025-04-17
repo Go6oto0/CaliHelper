@@ -10,54 +10,45 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.georgiyordanov.calihelper.R
-import com.georgiyordanov.calihelper.data.models.User
 import com.georgiyordanov.calihelper.databinding.ActivityRegisterBinding
 import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthState
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.UserViewModel
-import com.google.firebase.auth.FirebaseAuth
+import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthViewModel
 import kotlinx.coroutines.launch
 
 class RegisterActivity : BasicActivity() {
-    // Reuse the protected authViewModel from BasicActivity.
-    // Instantiate a separate UserViewModel for registration details.
-    private val userViewModel: UserViewModel by viewModels()
-    private lateinit var registerBinding: ActivityRegisterBinding
+    // Inherited from BasicActivity:
+    // protected val authViewModel: AuthViewModel by viewModels()
+
+    private lateinit var binding: ActivityRegisterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Inflate the registration layout.
-        registerBinding = ActivityRegisterBinding.inflate(layoutInflater)
-        // Insert the register view into the dynamic container within BasicActivity.
+
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
         basicBinding.contentFrame.removeAllViews()
-        basicBinding.contentFrame.addView(registerBinding.root)
+        basicBinding.contentFrame.addView(binding.root)
+
         setupClickListeners()
         setupObservers()
     }
 
     private fun setupClickListeners() {
-        registerBinding.btnRegister.setOnClickListener {
-            val email = registerBinding.etEmail.text.toString().trim()
-            val password = registerBinding.etPassword.text.toString().trim()
-            if (validateInput(email, password)) {
-                // Use inherited authViewModel to sign up the user.
-                authViewModel.signUp(email, password)
-            }
-        }
-    }
+        binding.btnRegister.setOnClickListener {
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
 
-    private fun validateInput(email: String, password: String): Boolean {
-        return when {
-            email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 showError("Invalid email")
-                false
+                return@setOnClickListener
             }
-            password.length < 6 -> {
+            if (password.length < 6) {
                 showError("Password must be at least 6 characters")
-                false
+                return@setOnClickListener
             }
-            else -> true
+
+            // Kick off sign-up in the shared AuthViewModel
+            authViewModel.signUp(email, password)
         }
     }
 
@@ -66,44 +57,31 @@ class RegisterActivity : BasicActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 authViewModel.authState.collect { state ->
                     when (state) {
-                        AuthState.Loading -> registerBinding.progressBar.visibility = View.VISIBLE
-                        AuthState.Success -> handleSuccess()
+                        AuthState.Loading -> binding.progressBar.visibility = View.VISIBLE
+                        AuthState.Success -> onSignUpSuccess()
                         is AuthState.Error -> showError(state.message)
                         else -> Unit
                     }
                 }
             }
         }
-        // Check if already logged in and then redirect to MainActivity.
+
+        // If the user somehow is already logged in, skip straight to Main:
         if (authViewModel.isUserLoggedIn()) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
     }
 
-    private fun handleSuccess() {
-        registerBinding.progressBar.visibility = View.GONE
-        createUserProfile()
-        Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show()
+    private fun onSignUpSuccess() {
+        binding.progressBar.visibility = View.GONE
+        Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
     private fun showError(message: String?) {
-        registerBinding.progressBar.visibility = View.GONE
-        Toast.makeText(this, message ?: "Error occurred", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun createUserProfile() {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser != null) {
-            val user = User(
-                uid = currentUser.uid
-                // Add additional fields as necessary.
-            )
-            userViewModel.createUser(user)
-        } else {
-            showError("User not found")
-        }
+        binding.progressBar.visibility = View.GONE
+        Toast.makeText(this, message ?: "Error occurred", Toast.LENGTH_LONG).show()
     }
 }

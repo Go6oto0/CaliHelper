@@ -1,7 +1,9 @@
 package com.georgiyordanov.calihelper.data.repository
+import android.util.Log
 import com.georgiyordanov.calihelper.data.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 
 
@@ -11,6 +13,8 @@ class UserRepository : IRepository<User> {
     private val firebaseAuth = FirebaseAuth.getInstance()
     override suspend fun create(entity: User) {
         try {
+            Log.d("ENTITY_IN_CREATE", entity.toString())
+            Log.d("CREATE_CALLER", entity.toString(), Throwable("Stack trace"))
             val documentRef = usersCollection.document(entity.uid)
             documentRef.set(entity).await()
         } catch (e: Exception) {
@@ -45,7 +49,7 @@ class UserRepository : IRepository<User> {
 
     override suspend fun update(id: String, updates: Map<String, Any?>) {
         try {
-            usersCollection.document(id).update(updates).await()
+            usersCollection.document(id).set(updates, SetOptions.merge()).await()
         } catch (e: Exception) {
             e.printStackTrace()
             throw e // Propagate the exception to the caller
