@@ -1,45 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".views.MainActivity">
+    android:layout_height="match_parent">
 
-    <!-- Welcome message -->
-    <TextView
-        android:id="@+id/tvWelcome"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/mainContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome to the Home Page!"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <!-- Button to go to profile screen -->
-    <Button
-        android:id="@+id/btnProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go to Profile"
-        app:layout_constraintTop_toBottomOf="@id/tvWelcome"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        <!-- The view container displays the profile data in read-only mode -->
+        <LinearLayout
+            android:id="@+id/viewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <!-- Button to log out -->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        app:layout_constraintTop_toBottomOf="@id/btnProfile"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+            <!-- Username Field -->
+            <TextView
+                android:id="@+id/tvUserNameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <!-- TextView for display -->
+                <TextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="(username)" />
+                <!-- Edit button -->
+                <ImageButton
+                    android:id="@+id/btnEditUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/edit_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Edit Username" />
+            </LinearLayout>
+            <!-- Inline EditText for username, initially hidden -->
+            <EditText
+                android:id="@+id/etUserNameInline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter username"
+                android:visibility="gone" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- Weight Field -->
+            <TextView
+                android:id="@+id/tvWeightLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weight (kg)" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/tvWeight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="(weight)" />
+                <ImageButton
+                    android:id="@+id/btnEditWeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/edit_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Edit Weight" />
+            </LinearLayout>
+            <EditText
+                android:id="@+id/etWeightInline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter weight (kg)"
+                android:inputType="numberDecimal"
+                android:visibility="gone" />
+
+            <!-- Height Field -->
+            <TextView
+                android:id="@+id/tvHeightLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Height (cm)" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/tvHeight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="(height)" />
+                <ImageButton
+                    android:id="@+id/btnEditHeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/edit_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Edit Height" />
+            </LinearLayout>
+            <EditText
+                android:id="@+id/etHeightInline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter height (cm)"
+                android:inputType="numberDecimal"
+                android:visibility="gone" />
+
+            <!-- Age Field -->
+            <TextView
+                android:id="@+id/tvAgeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/tvAge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="(age)" />
+                <ImageButton
+                    android:id="@+id/btnEditAge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/edit_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Edit Age" />
+            </LinearLayout>
+            <EditText
+                android:id="@+id/etAgeInline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter age"
+                android:inputType="number"
+                android:visibility="gone" />
+
+            <!-- Goal Field -->
+            <TextView
+                android:id="@+id/tvGoalLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Goal" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/tvGoal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="(goal)" />
+                <ImageButton
+                    android:id="@+id/btnEditGoal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/edit_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Edit Goal" />
+            </LinearLayout>
+            <EditText
+                android:id="@+id/etGoalInline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your goal"
+                android:inputType="text"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
