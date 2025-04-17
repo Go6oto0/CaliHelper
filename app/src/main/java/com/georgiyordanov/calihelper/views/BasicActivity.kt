@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+
 import androidx.core.view.WindowInsetsControllerCompat
 import com.georgiyordanov.calihelper.R
 import com.georgiyordanov.calihelper.databinding.ActivityBasicBinding
@@ -59,14 +60,20 @@ open class BasicActivity : AppCompatActivity() {
 
         // Example: Hide navigation items that are for registered users if the user is not logged in.
         if (!authViewModel.isUserLoggedIn()) {
+            basicBinding.navigationView.menu.findItem(R.id.nav_login)?.isVisible = true
+            basicBinding.navigationView.menu.findItem(R.id.nav_register)?.isVisible = true
             basicBinding.navigationView.menu.findItem(R.id.nav_calorie_tracker).isVisible = false
             basicBinding.navigationView.menu.findItem(R.id.nav_meals).isVisible = false
+            basicBinding.navigationView.menu.findItem(R.id.nav_profile).isVisible = false
             basicBinding.navigationView.menu.findItem(R.id.nav_workouts).isVisible = false
             // Hide admin-only navigation item as well.
             basicBinding.navigationView.menu.findItem(R.id.nav_registered_users)?.isVisible = false
         } else {
             // If the user is logged in, they see the normal navigation items.
+            basicBinding.navigationView.menu.findItem(R.id.nav_login)?.isVisible = false
+            basicBinding.navigationView.menu.findItem(R.id.nav_register)?.isVisible = false
             basicBinding.navigationView.menu.findItem(R.id.nav_calorie_tracker).isVisible = true
+            basicBinding.navigationView.menu.findItem(R.id.nav_profile).isVisible = true
             basicBinding.navigationView.menu.findItem(R.id.nav_meals).isVisible = true
             basicBinding.navigationView.menu.findItem(R.id.nav_workouts).isVisible = true
 
@@ -86,6 +93,8 @@ open class BasicActivity : AppCompatActivity() {
                 R.id.nav_meals -> startActivity(Intent(this, MealsActivity::class.java))
                 R.id.nav_workouts -> startActivity(Intent(this, WorkoutsActivity::class.java))
                 R.id.nav_profile -> startActivity(Intent(this, MainActivity::class.java))
+                R.id.nav_login -> startActivity(Intent(this, LoginActivity::class.java))
+                R.id.nav_register -> startActivity(Intent(this, RegisterActivity::class.java))
                 R.id.nav_registered_users -> {
                     // This navigation item is available only for admins
                     startActivity(Intent(this, RegisteredUsersActivity::class.java))
