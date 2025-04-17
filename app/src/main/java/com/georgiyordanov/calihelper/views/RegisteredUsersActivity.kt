@@ -3,23 +3,30 @@ package com.georgiyordanov.calihelper.views
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.georgiyordanov.calihelper.databinding.ActivityRegisteredUsersBinding
 import com.georgiyordanov.calihelper.data.models.User
+import com.georgiyordanov.calihelper.ui.theme.viewmodels.UserState
+import com.georgiyordanov.calihelper.ui.theme.viewmodels.UserViewModel
 import com.georgiyordanov.calihelper.views.adapters.RegisteredUsersAdapter
-import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class RegisteredUsersActivity : BasicActivity() {
 
     private lateinit var binding: ActivityRegisteredUsersBinding
-    private val db = FirebaseFirestore.getInstance()
+    private val userViewModel: UserViewModel by viewModels()
     private lateinit var adapter: RegisteredUsersAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityRegisteredUsersBinding.inflate(layoutInflater)
         basicBinding.contentFrame.addView(binding.root)
 
@@ -31,39 +38,75 @@ class RegisteredUsersActivity : BasicActivity() {
         }
 
         setupRecycler()
+        observeUserState()
+
+        // initial load
         loadUsers()
     }
 
     private fun setupRecycler() {
         adapter = RegisteredUsersAdapter(emptyList()) { user ->
-            deleteUser(user)
+            confirmAndDelete(user)
         }
         binding.rvUsers.layoutManager = LinearLayoutManager(this)
         binding.rvUsers.adapter = adapter
     }
 
-    private fun loadUsers() {
-        db.collection("users")
-            .get()
-            .addOnSuccessListener { snap ->
-                val users = snap.toObjects(User::class.java)
-                adapter.updateData(users)
+    private fun observeUserState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                userViewModel.userState.collectLatest { state ->
+                    when (state) {
+                        is UserState.UsersList -> {
+                            adapter.updateData(state.users.orEmpty())
+                        }
+                        is UserState.Error -> {
+                            Toast.makeText(
+                                this@RegisteredUsersActivity,
+                                "Error: ${state.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else -> {
+                            // Idle or Loading or Success: no-op
+                        }
+                    }
+                }
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error loading users: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+        }
     }
 
-    private fun deleteUser(user: User) {
-        db.collection("users")
-            .document(user.uid)
-            .delete()
-            .addOnSuccessListener {
-                Toast.makeText(this, "Deleted ${user.userName ?: user.uid}", Toast.LENGTH_SHORT).show()
-                loadUsers()
+    private fun loadUsers() {
+        userViewModel.readAllUsers()
+    }
+
+    private fun confirmAndDelete(user: User) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete “${user.userName ?: user.uid}”?")
+            .setMessage("This will permanently delete the user and all their data.")
+            .setPositiveButton("Delete") { dialog, _ ->
+                dialog.dismiss()
+                userViewModel.cascadeDeleteUserData(user.uid) { error ->
+                    runOnUiThread {
+                        if (error == null) {
+                            Toast.makeText(
+                                this,
+                                "Deleted ${user.userName ?: user.uid}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                this,
+                                "Delete failed: ${error.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        // refresh the users list afterward
+                        loadUsers()
+                    }
+                }
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Delete failed: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }

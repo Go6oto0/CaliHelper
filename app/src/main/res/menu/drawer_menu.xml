@@ -23,22 +23,26 @@
         android:title="Workouts"
         android:orderInCategory="4" />
     <item
+        android:id="@+id/nav_suggest_workouts"
+        android:title="Suggest Workouts"
+        android:orderInCategory="5" />
+    <item
         android:id="@+id/nav_profile"
         android:title="Profile"
-        android:orderInCategory="5" />
+        android:orderInCategory="6" />
     <item
         android:id="@+id/nav_login"
         android:title="Login"
-        android:orderInCategory="6"
+        android:orderInCategory="7"
         android:visible="false" />
     <item
         android:id="@+id/nav_register"
         android:title="Register"
-        android:orderInCategory="7"
+        android:orderInCategory="8"
         android:visible="false" />
     <item
         android:id="@+id/nav_registered_users"
         android:title="Registered Users"
-        android:orderInCategory="8" />
+        android:orderInCategory="9" />
 
 </menu>

@@ -8,7 +8,12 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.WriteBatch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 class UserViewModel : ViewModel() {
 
     private val userRepository = UserRepository()
@@ -27,7 +32,49 @@ class UserViewModel : ViewModel() {
             }
         }
     }
+    fun cascadeDeleteUserData(userId: String, onComplete: (Throwable?) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val batch: WriteBatch = db.batch()
 
+                // 1) delete the user doc itself
+                batch.delete(db.collection("users").document(userId))
+
+                // 2) delete calorieLogs
+                val calLogs = db.collection("calorieLogs")
+                    .whereEqualTo("userId", userId)
+                    .get().await()
+                calLogs.documents.forEach { batch.delete(it.reference) }
+
+                // 3) delete workoutPlans AND their exercises
+                val plansSnap = db.collection("workoutPlans")
+                    .whereEqualTo("userId", userId)
+                    .get().await()
+                for (planDoc in plansSnap.documents) {
+                    // delete the plan
+                    batch.delete(planDoc.reference)
+                    // delete exercises under this plan
+                    val exSnap = db.collection("workoutExercises")
+                        .whereEqualTo("workoutPlanId", planDoc.id)
+                        .get().await()
+                    exSnap.documents.forEach { batch.delete(it.reference) }
+                }
+
+                // 4) delete foodItems
+                val itemsSnap = db.collection("foodItems")
+                    .whereEqualTo("userId", userId)
+                    .get().await()
+                itemsSnap.documents.forEach { batch.delete(it.reference) }
+
+                // commit it all
+                batch.commit().await()
+                onComplete(null)
+            } catch (e: Throwable) {
+                onComplete(e)
+            }
+        }
+    }
     fun readUser(id: String) {
         viewModelScope.launch {
             _userState.value = UserState.Loading

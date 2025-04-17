@@ -1,6 +1,7 @@
 package com.georgiyordanov.calihelper.views.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.georgiyordanov.calihelper.data.models.ExerciseName
@@ -10,26 +11,37 @@ import com.georgiyordanov.calihelper.databinding.ItemWorkoutBinding
 class WorkoutAdapter(
     private var workouts: List<WorkoutPlan>,
     private var exerciseNames: List<ExerciseName> = emptyList(),
+    // now both callbacks are nullable; if you don’t pass them, the buttons hide
     private val onEdit: ((WorkoutPlan) -> Unit)? = null,
     private val onDelete: ((WorkoutPlan) -> Unit)? = null
 ) : RecyclerView.Adapter<WorkoutAdapter.WorkoutViewHolder>() {
 
-    inner class WorkoutViewHolder(private val binding: ItemWorkoutBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(workout: WorkoutPlan) {
-            binding.apply {
-                tvWorkoutName.text = workout.name
-                tvWorkoutDescription.text = workout.description
+    inner class WorkoutViewHolder(private val binding: ItemWorkoutBinding)
+        : RecyclerView.ViewHolder(binding.root) {
 
-                // Resolve exercise IDs to names and format for display
-                val exerciseDetails = workout.exercises.joinToString("\n") { exercise ->
-                    val name = exerciseNames.find { it.id == exercise.exerciseId }?.toString() ?: "Unknown"
-                    "$name – ${exercise.sets} sets, ${exercise.repetitions} reps"
-                }
+        fun bind(workout: WorkoutPlan) = binding.run {
+            tvWorkoutName.text = workout.name
+            tvWorkoutDescription.text = workout.description
 
-                tvWorkoutExercises.text = exerciseDetails
+            // Resolve ID → name properly
+            val exerciseDetails = workout.exercises.joinToString("\n") { ex ->
+                val name = exerciseNames
+                    .find { it.id == ex.exerciseId }
+                    ?.name
+                    ?: "Unknown"
+                "$name – ${ex.sets} sets, ${ex.repetitions} reps"
+            }
+            tvWorkoutExercises.text = exerciseDetails
 
-                btnEditWorkout.setOnClickListener { onEdit?.invoke(workout) }
-                btnDeleteWorkout.setOnClickListener { onDelete?.invoke(workout) }
+            // Show/hide and wire up the buttons
+            btnEditWorkout.visibility   = if (onEdit   != null) View.VISIBLE else View.GONE
+            btnDeleteWorkout.visibility = if (onDelete != null) View.VISIBLE else View.GONE
+
+            onEdit?.let { editCb ->
+                btnEditWorkout.setOnClickListener { editCb(workout) }
+            }
+            onDelete?.let { delCb ->
+                btnDeleteWorkout.setOnClickListener { delCb(workout) }
             }
         }
     }

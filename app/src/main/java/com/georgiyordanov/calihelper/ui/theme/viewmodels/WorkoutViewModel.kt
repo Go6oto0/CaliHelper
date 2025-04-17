@@ -34,14 +34,20 @@ class WorkoutViewModel : ViewModel() {
     fun fetchExerciseNames() {
         viewModelScope.launch {
             try {
-                Log.d("WorkoutViewModel", "Fetching exercise names...")
-                _exerciseNames.value = exerciseNameRepository.readAll() ?: emptyList()
+                val namesList = exerciseNameRepository.readAll() ?: emptyList()
+                _exerciseNames.value = namesList
+
+                // Log the entire list on one line
+                val allNames = namesList.joinToString(", ") { it.name }
+                Log.d("WorkoutViewModel", "Exercise names: [$allNames]")
             } catch (e: Exception) {
-                Log.e("WorkoutViewModel", "Failed to fetch exercise names", e)
+                Log.e("WorkoutViewModel", "Error fetching exercise names", e)
                 _exerciseNames.value = emptyList()
             }
         }
     }
+
+
 
     fun fetchUserWorkouts(userId: String) {
         viewModelScope.launch {

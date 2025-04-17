@@ -92,11 +92,16 @@ open class BasicActivity : AppCompatActivity() {
                 R.id.nav_calorie_tracker -> startActivity(Intent(this, CalorieTrackerActivity::class.java))
                 R.id.nav_meals -> startActivity(Intent(this, MealsActivity::class.java))
                 R.id.nav_workouts -> startActivity(Intent(this, WorkoutsActivity::class.java))
+
+                // ← New case to launch the Suggestor:
+                R.id.nav_suggest_workouts -> startActivity(
+                    Intent(this, WorkoutSuggestorActivity::class.java)
+                )
+
                 R.id.nav_profile -> startActivity(Intent(this, MainActivity::class.java))
                 R.id.nav_login -> startActivity(Intent(this, LoginActivity::class.java))
                 R.id.nav_register -> startActivity(Intent(this, RegisterActivity::class.java))
                 R.id.nav_registered_users -> {
-                    // This navigation item is available only for admins
                     startActivity(Intent(this, RegisteredUsersActivity::class.java))
                 }
             }

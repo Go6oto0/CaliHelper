@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/workoutSuggestorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Muscle‐group filter -->
+    <RadioGroup
+        android:id="@+id/radioGroupWorkoutType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbPull"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pull" />
+
+        <RadioButton
+            android:id="@+id/rbPush"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Push" />
+
+        <RadioButton
+            android:id="@+id/rbLegs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Legs" />
+
+        <RadioButton
+            android:id="@+id/rbCore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Core" />
+
+        <RadioButton
+            android:id="@+id/rbFullBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Full Body" />
+    </RadioGroup>
+
+    <!-- RecyclerView to show suggested workouts -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvWorkouts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"/>
+</LinearLayout>

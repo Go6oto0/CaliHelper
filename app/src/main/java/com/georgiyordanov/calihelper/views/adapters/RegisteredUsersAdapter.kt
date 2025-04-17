@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.georgiyordanov.calihelper.R
 import com.georgiyordanov.calihelper.data.models.User
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisteredUsersAdapter(
     private var users: List<User>,
@@ -20,13 +21,33 @@ class RegisteredUsersAdapter(
         private val tvEmail: TextView = view.findViewById(R.id.tvEmail)
         private val tvCounts: TextView = view.findViewById(R.id.tvCounts)
         private val btnDelete: ImageButton = view.findViewById(R.id.btnDeleteUser)
+        private val db = FirebaseFirestore.getInstance()
 
         fun bind(user: User) {
             tvName.text = user.userName ?: "(no name)"
             tvEmail.text = user.email ?: "(no email)"
-            val workouts = user.workoutPlanIds.size
-            val logs = user.calorieLogIds.size
-            tvCounts.text = "Workouts: $workouts   Logs: $logs"
+            tvCounts.text = "Loading..."
+
+            // Fetch workout count then calorie log count
+            db.collection("workoutPlans")
+                .whereEqualTo("userId", user.uid)
+                .get()
+                .addOnSuccessListener { wSnap ->
+                    val wCount = wSnap.size()
+                    db.collection("calorieLogs")
+                        .whereEqualTo("userId", user.uid)
+                        .get()
+                        .addOnSuccessListener { lSnap ->
+                            val lCount = lSnap.size()
+                            tvCounts.text = "Workouts: $wCount   Logs: $lCount"
+                        }
+                        .addOnFailureListener {
+                            tvCounts.text = "Workouts: $wCount   Logs: ?"
+                        }
+                }
+                .addOnFailureListener {
+                    tvCounts.text = "Workouts: ?   Logs: ?"
+                }
 
             btnDelete.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
