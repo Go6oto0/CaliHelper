@@ -6,11 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.georgiyordanov.calihelper.data.models.CommonFood
-import com.georgiyordanov.calihelper.network.NutritionixApiService
 import com.georgiyordanov.calihelper.network.NutritionixRetrofitInstance
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class FoodSearchViewModel : ViewModel() {
 

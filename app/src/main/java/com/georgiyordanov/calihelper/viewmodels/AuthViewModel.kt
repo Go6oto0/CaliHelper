@@ -1,20 +1,15 @@
-package com.georgiyordanov.calihelper.ui.theme.viewmodels
+package com.georgiyordanov.calihelper.viewmodels
 
 import android.util.Log
-import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.georgiyordanov.calihelper.data.models.User
 import com.georgiyordanov.calihelper.data.repository.AuthRepository
-import androidx.activity.viewModels
 import com.georgiyordanov.calihelper.data.repository.UserRepository
-import com.georgiyordanov.calihelper.viewmodels.CalorieTrackerViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
-import kotlinx.coroutines.tasks.await
 
 class AuthViewModel : ViewModel() {
     private val authRepository = AuthRepository()

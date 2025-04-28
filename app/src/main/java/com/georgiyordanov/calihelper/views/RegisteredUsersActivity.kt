@@ -13,8 +13,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.georgiyordanov.calihelper.databinding.ActivityRegisteredUsersBinding
 import com.georgiyordanov.calihelper.data.models.User
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.UserState
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.UserViewModel
+import com.georgiyordanov.calihelper.viewmodels.UserState
+import com.georgiyordanov.calihelper.viewmodels.UserViewModel
 import com.georgiyordanov.calihelper.views.adapters.RegisteredUsersAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

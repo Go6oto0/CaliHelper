@@ -1,4 +1,4 @@
-package com.georgiyordanov.calihelper.ui.theme.viewmodels
+package com.georgiyordanov.calihelper.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

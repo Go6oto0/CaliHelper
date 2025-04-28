@@ -12,8 +12,8 @@ import com.georgiyordanov.calihelper.adapters.WorkoutExerciseAdapter
 import com.georgiyordanov.calihelper.data.models.WorkoutExercise
 import com.georgiyordanov.calihelper.databinding.ActivityCreateWorkoutBinding
 import com.georgiyordanov.calihelper.databinding.DialogAddExerciseBinding
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.WorkoutState
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.WorkoutViewModel
+import com.georgiyordanov.calihelper.viewmodels.WorkoutState
+import com.georgiyordanov.calihelper.viewmodels.WorkoutViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

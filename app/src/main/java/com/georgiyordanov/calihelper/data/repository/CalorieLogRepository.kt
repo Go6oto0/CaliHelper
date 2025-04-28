@@ -86,7 +86,7 @@ class CalorieLogRepository : IRepository<CalorieLog> {
             // Create a new CalorieLog if not found.
             val newLog = CalorieLog(
                 userId = userId,
-                caloriesBurned = 0,
+                //caloriesBurned = 0,
                 caloriesConsumed = 0,
                 netCalories = 0,
                 date = dateString,   // Stored as a String in Firestore.

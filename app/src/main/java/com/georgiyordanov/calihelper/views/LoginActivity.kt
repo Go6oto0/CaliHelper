@@ -8,7 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.georgiyordanov.calihelper.databinding.ActivityLoginBinding
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthState
+import com.georgiyordanov.calihelper.viewmodels.AuthState
 import kotlinx.coroutines.launch
 
 class LoginActivity : BasicActivity() {

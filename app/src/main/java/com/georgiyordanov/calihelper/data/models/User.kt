@@ -11,8 +11,8 @@ data class User(
     val age: Int? = null,
     val gender: String? = null,        // ← new
     val goal: String? = null,
-    val progressLogIds: List<String> = emptyList(),
-    val calorieLogIds: List<String> = emptyList(),
-    val workoutPlanIds: List<String> = emptyList()
+    //val progressLogIds: List<String> = emptyList(),
+    //val calorieLogIds: List<String> = emptyList(),
+    //val workoutPlanIds: List<String> = emptyList()
 )
 

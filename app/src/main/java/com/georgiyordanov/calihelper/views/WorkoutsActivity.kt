@@ -11,8 +11,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.georgiyordanov.calihelper.databinding.ActivityWorkoutsBinding
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.WorkoutState
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.WorkoutViewModel
+import com.georgiyordanov.calihelper.viewmodels.WorkoutState
+import com.georgiyordanov.calihelper.viewmodels.WorkoutViewModel
 import com.georgiyordanov.calihelper.views.adapters.WorkoutAdapter
 import com.georgiyordanov.calihelper.data.models.WorkoutPlan
 import kotlinx.coroutines.flow.collectLatest

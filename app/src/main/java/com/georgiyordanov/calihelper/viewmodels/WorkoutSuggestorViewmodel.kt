@@ -1,4 +1,4 @@
-package com.georgiyordanov.calihelper.ui.theme.viewmodels
+package com.georgiyordanov.calihelper.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

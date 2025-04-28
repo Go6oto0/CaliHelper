@@ -13,8 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.georgiyordanov.calihelper.R
 import com.georgiyordanov.calihelper.databinding.ActivityBasicBinding
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthViewModel
-import com.google.firebase.auth.FirebaseAuth
+import com.georgiyordanov.calihelper.viewmodels.AuthViewModel
 
 open class BasicActivity : AppCompatActivity() {
     // Make the authViewModel protected so child activities (like Login and Register) can reuse it.

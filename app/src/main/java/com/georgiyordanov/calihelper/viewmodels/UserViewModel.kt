@@ -1,4 +1,4 @@
-package com.georgiyordanov.calihelper.ui.theme.viewmodels
+package com.georgiyordanov.calihelper.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +13,7 @@ import com.google.firebase.firestore.WriteBatch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 class UserViewModel : ViewModel() {
 
     private val userRepository = UserRepository()

@@ -11,7 +11,6 @@ import com.georgiyordanov.calihelper.data.models.CalorieLog
 import com.georgiyordanov.calihelper.data.models.FoodItem
 import com.georgiyordanov.calihelper.data.repository.CalorieLogRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

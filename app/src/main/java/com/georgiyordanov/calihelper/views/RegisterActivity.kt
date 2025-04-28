@@ -6,13 +6,11 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.georgiyordanov.calihelper.databinding.ActivityRegisterBinding
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthState
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.AuthViewModel
+import com.georgiyordanov.calihelper.viewmodels.AuthState
 import kotlinx.coroutines.launch
 
 class RegisterActivity : BasicActivity() {

@@ -8,8 +8,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.georgiyordanov.calihelper.R
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.UserState
-import com.georgiyordanov.calihelper.ui.theme.viewmodels.UserViewModel
+import com.georgiyordanov.calihelper.viewmodels.UserState
+import com.georgiyordanov.calihelper.viewmodels.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
