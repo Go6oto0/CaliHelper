@@ -3,208 +3,153 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:padding="@dimen/spacing_medium">
 
     <LinearLayout
-        android:id="@+id/mainContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="@dimen/spacing_medium">
 
-        <!-- Profile fields in view‑edit mode -->
-        <LinearLayout
-            android:id="@+id/viewContainer"
+        <!-- Profile Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_margin="@dimen/spacing_medium"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            android:padding="@dimen/spacing_large">
 
-            <!-- Username -->
-            <TextView
-                android:id="@+id/tvUserNameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <TextView
-                    android:id="@+id/tvUserName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="(username)" />
-                <ImageButton
-                    android:id="@+id/btnEditUserName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/edit_button"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="Edit Username" />
-            </LinearLayout>
-            <EditText
-                android:id="@+id/etUserNameInline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter username"
-                android:visibility="gone" />
+                android:orientation="vertical">
 
-            <!-- Weight -->
-            <TextView
-                android:id="@+id/tvWeightLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Weight (kg)" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <TextView
-                    android:id="@+id/tvWeight"
-                    android:layout_width="0dp"
+                <!-- Username -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilUserName"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="(weight)" />
-                <ImageButton
-                    android:id="@+id/btnEditWeight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/edit_button"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="Edit Weight" />
-            </LinearLayout>
-            <EditText
-                android:id="@+id/etWeightInline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter weight (kg)"
-                android:inputType="numberDecimal"
-                android:visibility="gone" />
+                    android:layout_margin="@dimen/spacing_small"
+                    android:hint="Username">
 
-            <!-- Height -->
-            <TextView
-                android:id="@+id/tvHeightLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Height (cm)" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <TextView
-                    android:id="@+id/tvHeight"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="(height)" />
-                <ImageButton
-                    android:id="@+id/btnEditHeight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/edit_button"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="Edit Height" />
-            </LinearLayout>
-            <EditText
-                android:id="@+id/etHeightInline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter height (cm)"
-                android:inputType="numberDecimal"
-                android:visibility="gone" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etUserName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Age -->
-            <TextView
-                android:id="@+id/tvAgeLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Age" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <TextView
-                    android:id="@+id/tvAge"
-                    android:layout_width="0dp"
+                <!-- Weight -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilWeight"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="(age)" />
-                <ImageButton
-                    android:id="@+id/btnEditAge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/edit_button"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="Edit Age" />
-            </LinearLayout>
-            <EditText
-                android:id="@+id/etAgeInline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter age"
-                android:inputType="number"
-                android:visibility="gone" />
+                    android:layout_margin="@dimen/spacing_small"
+                    android:hint="Weight (kg)">
 
-            <!-- Gender (new) -->
-            <TextView
-                android:id="@+id/tvGenderLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Gender" />
-            <RadioGroup
-                android:id="@+id/rgGender"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/rbMale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Male" />
-                <RadioButton
-                    android:id="@+id/rbFemale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Female" />
-            </RadioGroup>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etWeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Goal -->
-            <TextView
-                android:id="@+id/tvGoalLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Goal" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <TextView
-                    android:id="@+id/tvGoal"
-                    android:layout_width="0dp"
+                <!-- Height -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilHeight"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="(goal)" />
-                <ImageButton
-                    android:id="@+id/btnEditGoal"
+                    android:layout_margin="@dimen/spacing_small"
+                    android:hint="Height (cm)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etHeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Age -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilAge"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/spacing_small"
+                    android:hint="Age">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Gender -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:text="Gender"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="@dimen/spacing_small" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupGender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/edit_button"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="Edit Goal" />
+                    android:layout_gravity="center_horizontal"
+                    app:singleSelection="true"
+                    app:chipSpacing="8dp"
+                    android:layout_margin="@dimen/spacing_small">
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:id="@+id/chipMale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Male" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:id="@+id/chipFemale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Female" />
+                </com.google.android.material.chip.ChipGroup>
+
+                <!-- Goal -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilGoal"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/spacing_small"
+                    android:hint="Goal">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etGoal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
             </LinearLayout>
-            <EditText
-                android:id="@+id/etGoalInline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter your goal"
-                android:inputType="text"
-                android:visibility="gone" />
-        </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Update Profile Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUpdateProfile"
+            style="@style/Widget.CaliHelper.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update Profile" />
+
     </LinearLayout>
 </ScrollView>
