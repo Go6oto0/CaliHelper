@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.georgiyordanov.calihelper.databinding.ActivityMainBinding
 import com.georgiyordanov.calihelper.databinding.ActivityRegisterBinding
 import com.georgiyordanov.calihelper.viewmodels.AuthState
 import kotlinx.coroutines.launch
@@ -48,6 +49,11 @@ class RegisterActivity : BasicActivity() {
             // Kick off sign-up in the shared AuthViewModel
             authViewModel.signUp(email, password)
         }
+        binding.tvLoginLink.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+
     }
 
     private fun setupObservers() {

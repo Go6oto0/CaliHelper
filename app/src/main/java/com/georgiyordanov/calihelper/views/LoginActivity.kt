@@ -26,6 +26,10 @@ class LoginActivity : BasicActivity() {
     }
 
     private fun setupClickListeners() {
+        loginBinding.tvRegisterLink.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+            finish()
+        }
         loginBinding.btnLogin.setOnClickListener {
             val email = loginBinding.etEmail.text.toString().trim()
             val password = loginBinding.etPassword.text.toString().trim()

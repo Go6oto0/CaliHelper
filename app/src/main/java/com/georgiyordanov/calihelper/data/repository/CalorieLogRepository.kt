@@ -72,36 +72,37 @@ class CalorieLogRepository : IRepository<CalorieLog> {
             throw e
         }
     }
-    suspend fun getOrCreateLogForDate(userId: String, localDate: LocalDate): Pair<CalorieLog, String> {
-        val dateString = localDate.toString()  // e.g. "2025-04-13"
+    suspend fun getOrCreateLogForDate(
+        userId: String,
+        localDate: LocalDate
+    ): Pair<CalorieLog, String> {
+        val dateString = localDate.toString() // e.g. "2025-04-13"
+        // Compose a stable doc ID so “userId+date” is always the same
+        val docId = "${userId}_$dateString"
+        val docRef = calorieLogsCollection.document(docId)
 
-        // Query Firestore for a document with userId and date matching the string.
-        val querySnapshot = calorieLogsCollection
-            .whereEqualTo("userId", userId)
-            .whereEqualTo("date", dateString)
-            .get()
-            .await()
-
-        return if (querySnapshot.isEmpty) {
-            // Create a new CalorieLog if not found.
-            val newLog = CalorieLog(
-                userId = userId,
-                //caloriesBurned = 0,
-                caloriesConsumed = 0,
-                netCalories = 0,
-                date = dateString,   // Stored as a String in Firestore.
-                foodItems = emptyList()
-            )
-            val docRef = calorieLogsCollection.add(newLog).await()
-            Pair(newLog, docRef.id)
+        // Try to fetch the existing document
+        val snapshot = docRef.get().await()
+        return if (snapshot.exists()) {
+            // Deserialize and return
+            val log = snapshot.toObject(CalorieLog::class.java)
+                ?: throw Exception("Failed to deserialize existing CalorieLog")
+            Pair(log, docId)
         } else {
-            // Use the first found document.
-            val document = querySnapshot.documents.first()
-            val log = document.toObject(CalorieLog::class.java)
-                ?: throw Exception("Failed to deserialize CalorieLog")
-            Pair(log, document.id)
+            // Create a brand‐new, zeroed log
+            val newLog = CalorieLog(
+                userId           = userId,
+                date             = dateString,
+                caloriesConsumed = 0,
+                caloriesBurned   = 0,       // initialize burned too
+                netCalories      = 0,
+                foodItems        = emptyList()
+            )
+            docRef.set(newLog).await()
+            Pair(newLog, docId)
         }
     }
+
 
     suspend fun addFoodItem(documentId: String, foodItem: Any) {
         // Log the attempt to update.
