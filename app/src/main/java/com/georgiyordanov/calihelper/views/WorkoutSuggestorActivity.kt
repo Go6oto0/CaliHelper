@@ -42,19 +42,25 @@ class WorkoutSuggestorActivity : BasicActivity() {
     }
 
     private fun setupFilters() {
-        binding.radioGroupWorkoutType.check(R.id.rbPull)
-        binding.radioGroupWorkoutType.setOnCheckedChangeListener { _: RadioGroup, checkedId: Int ->
+        // Default-select the “Pull” chip
+        binding.chipGroupWorkoutType.check(R.id.chipPull)
+        selectedType = "pull"
+        loadSuggestions()
+
+        // Listen for chip changes
+        binding.chipGroupWorkoutType.setOnCheckedChangeListener { _, checkedId ->
             selectedType = when (checkedId) {
-                R.id.rbPull     -> "pull"
-                R.id.rbPush     -> "push"
-                R.id.rbLegs     -> "legs"
-                R.id.rbCore     -> "core"
-                R.id.rbFullBody -> "fullbody"
-                else            -> "pull"
+                R.id.chipPull     -> "pull"
+                R.id.chipPush     -> "push"
+                R.id.chipLegs     -> "legs"
+                R.id.chipCore     -> "core"
+                R.id.chipFullBody -> "fullbody"
+                else              -> "pull"  // fallback
             }
             loadSuggestions()
         }
     }
+
 
     private fun setupRecycler() {
         adapter = WorkoutAdapter(
