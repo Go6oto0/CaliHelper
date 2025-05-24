@@ -20,10 +20,12 @@ class WorkoutExerciseAdapter(
             binding.btnRemove.setOnClickListener {
                 onRemoveClick(adapterPosition)
             }
-            binding.root.setOnClickListener {
+            binding.cardExercise.setOnClickListener {
                 onItemClick?.invoke(adapterPosition)
             }
         }
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

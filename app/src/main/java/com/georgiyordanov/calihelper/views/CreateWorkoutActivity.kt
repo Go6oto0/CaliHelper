@@ -79,16 +79,21 @@ class CreateWorkoutActivity : BasicActivity() {
         binding.btnAddExercise.setOnClickListener { showAddExerciseDialog() }
 
         binding.btnCreateWorkout.setOnClickListener {
-            val name = binding.etWorkoutName.text.toString().trim()
-            val description = binding.etWorkoutDescription.text.toString().trim()
+            val name = binding.etCreateWorkoutName.text.toString().trim()
+            val description = binding.etCreateWorkoutDescription.text.toString().trim()
 
+            // Validate name
             if (name.isEmpty()) {
-                binding.etWorkoutName.error = "Enter workout name"
+                binding.tilCreateName.error = "Enter workout name"
                 return@setOnClickListener
+            } else {
+                binding.tilCreateName.error = null
             }
 
+            // All good, create the workout
             workoutViewModel.createWorkoutPlan(getUserId(), name, description, exerciseList)
         }
+
     }
 
     private fun showAddExerciseDialog() {

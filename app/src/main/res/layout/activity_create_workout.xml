@@ -5,7 +5,7 @@
     android:id="@+id/create_workout_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="@dimen/spacing_medium">
 
     <!-- Title -->
     <TextView
@@ -13,68 +13,106 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create Workout"
-        android:textAppearance="?attr/textAppearanceHeadline6"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
-    <!-- Workout Name Input -->
-    <EditText
-        android:id="@+id/etWorkoutName"
+    <!-- Card grouping name & description -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardCreateDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Workout Name"
         app:layout_constraintTop_toBottomOf="@id/tvCreateWorkoutTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="@dimen/spacing_large"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        android:padding="@dimen/spacing_large">
 
-    <!-- Workout Description Input -->
-    <EditText
-        android:id="@+id/etWorkoutDescription"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCreateName"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/spacing_small"
+                app:boxStrokeColor="?attr/colorPrimary"
+                android:hint="Workout Name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCreateWorkoutName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/spacing_small"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCreateDescription"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/spacing_small"
+                android:hint="Workout Description">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCreateWorkoutDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/spacing_small"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Add Exercise button, centered & full-width -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddExercise"
+        style="@style/Widget.CaliHelper.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Workout Description"
-        app:layout_constraintTop_toBottomOf="@id/etWorkoutName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
-
-    <!-- Button to add an exercise -->
-    <Button
-        android:id="@+id/btnAddExercise"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Add Exercise"
-        app:layout_constraintTop_toBottomOf="@id/etWorkoutDescription"
+        android:layout_marginTop="@dimen/spacing_large"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        app:layout_constraintTop_toBottomOf="@id/cardCreateDetails"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="24dp" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- RecyclerView to display added exercises -->
+    <!-- Exercise list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvExercises"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:minHeight="100dp"
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:layout_marginBottom="@dimen/spacing_medium"
         app:layout_constraintTop_toBottomOf="@id/btnAddExercise"
         app:layout_constraintBottom_toTopOf="@id/btnCreateWorkout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Button to create the workout -->
-    <Button
+    <!-- Create Workout button -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCreateWorkout"
+        style="@style/Widget.CaliHelper.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Create Workout"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_large"
         app:layout_constraintTop_toBottomOf="@id/rvExercises"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="24dp" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <!-- ProgressBar for loading state -->
+    <!-- Loading spinner -->
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"
@@ -84,6 +122,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
