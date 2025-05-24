@@ -1,64 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mealsLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:gravity="center_horizontal"
+    android:padding="@dimen/spacing_large">
 
-    <!-- Meal type filter -->
-    <RadioGroup
-        android:id="@+id/radioGroupMealType"
+    <!-- Meal type filter card -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginTop="@dimen/spacing_large"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        android:paddingHorizontal="@dimen/spacing_medium"
+        android:paddingTop="@dimen/spacing_large"
+        android:paddingBottom="@dimen/spacing_medium">
 
-        <RadioButton
-            android:id="@+id/rbVegan"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Vegan"/>
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-        <RadioButton
-            android:id="@+id/rbVegetarian"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Vegetarian"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:text="Select meal type"
+                android:layout_marginBottom="@dimen/spacing_small"
+                android:layout_marginTop="@dimen/spacing_small" />
 
-        <RadioButton
-            android:id="@+id/rbOmnivore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Omnivore"/>
-    </RadioGroup>
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                android:layout_gravity="center">
 
-    <!-- Density filter -->
-    <RadioGroup
-        android:id="@+id/radioGroupDensity"
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupMealType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    app:chipSpacing="8dp">
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:id="@+id/chipVegan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vegan" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:id="@+id/chipVegetarian"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vegetarian" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:id="@+id/chipOmnivore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Omnivore" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Density filter card -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        android:paddingHorizontal="@dimen/spacing_medium"
+        android:paddingTop="@dimen/spacing_large"
+        android:paddingBottom="@dimen/spacing_medium">
 
-        <RadioButton
-            android:id="@+id/rbLight"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Light"/>
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-        <RadioButton
-            android:id="@+id/rbMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Medium"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:text="Select density"
+                android:layout_marginBottom="@dimen/spacing_small"
+                android:layout_marginTop="@dimen/spacing_small" />
 
-        <RadioButton
-            android:id="@+id/rbDense"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dense"/>
-    </RadioGroup>
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                android:layout_gravity="center">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupDensity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    app:chipSpacing="8dp">
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:id="@+id/chipLight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Light" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:id="@+id/chipMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Medium" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:id="@+id/chipDense"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dense" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- RecyclerView to show meals -->
     <androidx.recyclerview.widget.RecyclerView
@@ -66,5 +155,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="16dp"/>
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/spacing_medium"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
 </LinearLayout>

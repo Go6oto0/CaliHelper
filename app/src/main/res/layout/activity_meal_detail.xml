@@ -5,57 +5,74 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:padding="16dp">
+    android:padding="@dimen/spacing_medium">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_medium">
 
+        <!-- Meal Name -->
         <TextView
             android:id="@+id/tvName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            style="@style/TextAppearance.MaterialComponents.Headline5"
+            android:text="Meal Name"
+            android:layout_marginBottom="@dimen/spacing_small" />
 
+        <!-- Calories -->
         <TextView
             android:id="@+id/tvCalories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:text="Calories: 0 kcal"
+            android:layout_marginBottom="@dimen/spacing_medium" />
 
+        <!-- Description -->
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            android:text="Description of the meal goes here."
+            android:layout_marginBottom="@dimen/spacing_medium" />
 
+        <!-- Ingredients Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ingredients:"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:text="Ingredients"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvIngredients"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:text="• Ingredient 1\n• Ingredient 2\n• Ingredient 3"
+            android:layout_marginBottom="@dimen/spacing_medium" />
 
+        <!-- Instructions Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Instructions:"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:text="Instructions"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvInstructions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:text="1. Step one description.\n2. Step two description.\n3. Step three description."
+            android:layout_marginBottom="@dimen/spacing_large" />
 
     </LinearLayout>
 </ScrollView>

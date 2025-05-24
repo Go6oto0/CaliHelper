@@ -42,30 +42,36 @@ class MealsActivity : BasicActivity() {
     }
 
     private fun setupFilters() {
-        // set defaults
-        binding.radioGroupMealType.check(R.id.rbVegan)
-        binding.radioGroupDensity.check(R.id.rbLight)
+        // Default‐select the first chip in each group
+        binding.chipGroupMealType.check(R.id.chipVegan)
+        selectedType = "vegan"
+        binding.chipGroupDensity.check(R.id.chipLight)
+        selectedDensity = "light"
+        loadMeals()
 
-        binding.radioGroupMealType.setOnCheckedChangeListener { _, checkedId ->
+        // Meal‐type selection listener
+        binding.chipGroupMealType.setOnCheckedChangeListener { _, checkedId ->
             selectedType = when (checkedId) {
-                R.id.rbVegan -> "vegan"
-                R.id.rbVegetarian -> "vegetarian"
-                R.id.rbOmnivore -> "omnivore"
-                else -> "vegan"
+                R.id.chipVegan      -> "vegan"
+                R.id.chipVegetarian -> "vegetarian"
+                R.id.chipOmnivore   -> "omnivore"
+                else                 -> "vegan"
             }
             loadMeals()
         }
 
-        binding.radioGroupDensity.setOnCheckedChangeListener { _, checkedId ->
+        // Density selection listener
+        binding.chipGroupDensity.setOnCheckedChangeListener { _, checkedId ->
             selectedDensity = when (checkedId) {
-                R.id.rbLight -> "light"
-                R.id.rbMedium -> "medium"
-                R.id.rbDense -> "dense"
-                else -> "light"
+                R.id.chipLight  -> "light"
+                R.id.chipMedium -> "medium"
+                R.id.chipDense  -> "dense"
+                else            -> "light"
             }
             loadMeals()
         }
     }
+
 
     private fun setupRecycler() {
         adapter = MealsAdapter(emptyList())
