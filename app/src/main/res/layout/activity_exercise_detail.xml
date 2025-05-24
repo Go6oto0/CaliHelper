@@ -2,60 +2,62 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".views.ExerciseDetailActivity">
+    android:layout_height="match_parent">
 
-    <!-- Exercise name/title -->
-    <TextView
-        android:id="@+id/exerciseName"
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Exercise Name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textStyle="bold"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:padding="@dimen/spacing_medium"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Technique/description text -->
-    <TextView
-        android:id="@+id/exerciseTechnique"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Technique/Description details will appear here."
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintTop_toBottomOf="@id/exerciseName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_medium">
 
-    <!-- Instructions label -->
-    <TextView
-        android:id="@+id/instructionsLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Instructions:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/exerciseTechnique"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp" />
+            <!-- Exercise Name -->
+            <TextView
+                android:id="@+id/exerciseName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:text="Exercise Name"
+                android:layout_marginBottom="@dimen/spacing_small" />
 
-    <!-- Exercise instructions -->
-    <TextView
-        android:id="@+id/exerciseInstructions"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Step by step instructions will appear here."
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        app:layout_constraintTop_toBottomOf="@id/instructionsLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp" />
+            <!-- Technique / Description -->
+            <TextView
+                android:id="@+id/exerciseTechnique"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:text="Technique/Description details will appear here."
+                android:layout_marginBottom="@dimen/spacing_medium" />
 
+            <!-- Instructions Section -->
+            <TextView
+                android:id="@+id/instructionsLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:text="Instructions"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/spacing_small" />
+
+            <TextView
+                android:id="@+id/exerciseInstructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:text="1. Step one description.\n2. Step two description.\n3. Step three description."
+                android:layout_marginBottom="@dimen/spacing_large" />
+
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

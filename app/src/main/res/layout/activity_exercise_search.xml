@@ -2,22 +2,77 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.ExerciseSearchActivity">
+    android:padding="@dimen/spacing_medium">
 
-    <!-- AutoCompleteTextView for exercise search -->
+    <!-- Intro card explaining exercise search -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardIntro"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/spacing_medium"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        android:padding="@dimen/spacing_medium">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Paragraph 1 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_margin="@dimen/spacing_small"
+                android:text="CaliHelper is built for calisthenics enthusiasts. Master bodyweight basics with guided workouts." />
+
+            <!-- Paragraph 2 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_marginStart="@dimen/spacing_small"
+                android:layout_marginEnd="@dimen/spacing_small"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:text="Explore advanced and auxiliary exercises—like plyometrics and mobility drills—to progress safely and effectively." />
+
+            <!-- Examples subtitle -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:layout_margin="@dimen/spacing_small"
+                android:text="Try searching for:" />
+
+            <!-- Examples list -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_margin="@dimen/spacing_small"
+                android:text="• Muscle-ups\n• Handstand Push-ups\n• Pistol Squats\n• L-sit Pull-ups\n• Back Lever" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Search bar (keep ID unchanged) -->
     <AutoCompleteTextView
         android:id="@+id/searchBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Search exercises..."
-        android:padding="8dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:inputType="text"
+        android:padding="@dimen/spacing_small"
+        app:layout_constraintTop_toBottomOf="@id/cardIntro"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        android:layout_margin="@dimen/spacing_medium" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
