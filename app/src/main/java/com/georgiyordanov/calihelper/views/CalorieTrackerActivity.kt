@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -22,7 +23,9 @@ import com.georgiyordanov.calihelper.data.models.User
 import com.georgiyordanov.calihelper.databinding.ActivityCalorieTrackerBinding
 import com.georgiyordanov.calihelper.viewmodels.CalorieTrackerViewModel
 import com.georgiyordanov.calihelper.viewmodels.FoodSearchViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 @RequiresApi(Build.VERSION_CODES.O)
 class CalorieTrackerActivity : BasicActivity() {
 
@@ -110,12 +113,23 @@ class CalorieTrackerActivity : BasicActivity() {
         binding.autoCompleteSearch.setOnItemClickListener { parent, _, pos, _ ->
             val name = parent.getItemAtPosition(pos) as String
             commonFoodMap[name]?.let { food ->
+                // 1) block further input & show spinner
+                binding.autoCompleteSearch.isEnabled = false
+                binding.progressBar.visibility = View.VISIBLE
+
+                // 2) launch details screen
                 startActivity(Intent(this, FoodDetailActivity::class.java).apply {
                     putExtra("selectedFood", food)
                     putExtra("logDocId", calorieTrackerViewModel.currentLogDocumentId)
                 })
+
+                // 3) if you want to immediately clear the spinner here:
+                // (the new Activity will cover this one)
+                binding.progressBar.visibility = View.GONE
+                binding.autoCompleteSearch.isEnabled = true
             } ?: Toast.makeText(this, "Food details not found", Toast.LENGTH_SHORT).show()
         }
+
     }
 
     /** Fetch the user’s profile, compute maintenance cals, and show it. */
