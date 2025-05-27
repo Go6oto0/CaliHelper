@@ -10,7 +10,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.georgiyordanov.calihelper.databinding.ActivityLoginBinding
 import com.georgiyordanov.calihelper.viewmodels.AuthState
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : BasicActivity() {
     private lateinit var loginBinding: ActivityLoginBinding
 

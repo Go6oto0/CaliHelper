@@ -9,11 +9,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.georgiyordanov.calihelper.databinding.ActivityMainBinding
 import com.georgiyordanov.calihelper.databinding.ActivityRegisterBinding
 import com.georgiyordanov.calihelper.viewmodels.AuthState
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisterActivity : BasicActivity() {
     // Inherited from BasicActivity:
     // protected val authViewModel: AuthViewModel by viewModels()

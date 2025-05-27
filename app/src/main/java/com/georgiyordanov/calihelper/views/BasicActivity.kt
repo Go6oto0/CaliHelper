@@ -14,7 +14,9 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.georgiyordanov.calihelper.R
 import com.georgiyordanov.calihelper.databinding.ActivityBasicBinding
 import com.georgiyordanov.calihelper.viewmodels.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 open class BasicActivity : AppCompatActivity() {
     // Make the authViewModel protected so child activities (like Login and Register) can reuse it.
     protected val authViewModel: AuthViewModel by viewModels()

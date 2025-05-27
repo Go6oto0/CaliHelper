@@ -10,7 +10,9 @@ import com.georgiyordanov.calihelper.R
 import com.georgiyordanov.calihelper.data.models.WorkoutExercise
 import com.georgiyordanov.calihelper.data.models.WorkoutPlan
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SeedSuggestedWorkoutsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

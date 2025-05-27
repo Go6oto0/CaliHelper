@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.georgiyordanov.calihelper.R
 import com.georgiyordanov.calihelper.data.models.Meal
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MealsSeedingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

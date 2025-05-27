@@ -7,7 +7,9 @@ import com.georgiyordanov.calihelper.data.models.Exercise
 import com.georgiyordanov.calihelper.databinding.ActivityExerciseDetailBinding
 import com.georgiyordanov.calihelper.network.RetrofitInstance
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ExerciseDetailActivity : BasicActivity() {
 
     private lateinit var binding: ActivityExerciseDetailBinding

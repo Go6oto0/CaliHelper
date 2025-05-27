@@ -16,7 +16,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SeedExerciseNamesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityExerciseSearchBinding
     private val TAG = "ExerciseSearchActivity"

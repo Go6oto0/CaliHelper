@@ -6,7 +6,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.georgiyordanov.calihelper.data.models.Meal
 import com.georgiyordanov.calihelper.databinding.ActivityMealDetailBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MealDetailActivity : BasicActivity() {
 
     private lateinit var binding: ActivityMealDetailBinding

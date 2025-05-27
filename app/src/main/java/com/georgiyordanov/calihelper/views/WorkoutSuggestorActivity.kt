@@ -13,7 +13,9 @@ import com.georgiyordanov.calihelper.data.models.WorkoutPlan
 import com.georgiyordanov.calihelper.databinding.ActivityWorkoutSuggestorBinding
 import com.georgiyordanov.calihelper.views.adapters.WorkoutAdapter
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class WorkoutSuggestorActivity : BasicActivity() {
 
     private lateinit var binding: ActivityWorkoutSuggestorBinding

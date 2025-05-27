@@ -11,11 +11,15 @@ import com.georgiyordanov.calihelper.data.models.Meal
 import com.georgiyordanov.calihelper.databinding.ActivityMealsBinding
 import com.georgiyordanov.calihelper.views.adapters.MealsAdapter
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MealsActivity : BasicActivity() {
 
     private lateinit var binding: ActivityMealsBinding
-    private lateinit var adapter: MealsAdapter
+    @Inject
+    lateinit var adapter: MealsAdapter
 
     // current filter selections
     private var selectedType: String = "vegan"
@@ -44,10 +48,7 @@ class MealsActivity : BasicActivity() {
     private fun setupFilters() {
         // Default‐select the first chip in each group
         binding.chipGroupMealType.check(R.id.chipVegan)
-        selectedType = "vegan"
         binding.chipGroupDensity.check(R.id.chipLight)
-        selectedDensity = "light"
-        loadMeals()
 
         // Meal‐type selection listener
         binding.chipGroupMealType.setOnCheckedChangeListener { _, checkedId ->
@@ -74,7 +75,6 @@ class MealsActivity : BasicActivity() {
 
 
     private fun setupRecycler() {
-        adapter = MealsAdapter(emptyList())
         binding.rvMeals.layoutManager = LinearLayoutManager(this)
         binding.rvMeals.adapter = adapter
     }

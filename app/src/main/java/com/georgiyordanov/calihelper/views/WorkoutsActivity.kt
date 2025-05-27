@@ -17,7 +17,9 @@ import com.georgiyordanov.calihelper.views.adapters.WorkoutAdapter
 import com.georgiyordanov.calihelper.data.models.WorkoutPlan
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class WorkoutsActivity : BasicActivity() {
 
     private lateinit var binding: ActivityWorkoutsBinding

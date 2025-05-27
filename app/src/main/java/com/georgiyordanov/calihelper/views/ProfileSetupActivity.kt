@@ -13,7 +13,9 @@ import com.georgiyordanov.calihelper.viewmodels.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileSetupActivity : BasicActivity() {
 
     private val userViewModel: UserViewModel by viewModels()

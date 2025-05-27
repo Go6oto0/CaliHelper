@@ -18,7 +18,9 @@ import com.georgiyordanov.calihelper.viewmodels.UserViewModel
 import com.georgiyordanov.calihelper.views.adapters.RegisteredUsersAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisteredUsersActivity : BasicActivity() {
 
     private lateinit var binding: ActivityRegisteredUsersBinding

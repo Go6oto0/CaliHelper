@@ -1,3 +1,4 @@
+// CalorieTrackerActivity.kt
 package com.georgiyordanov.calihelper.views
 
 import android.content.Intent
@@ -12,18 +13,18 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import com.georgiyordanov.calihelper.data.models.CommonFood
 import com.georgiyordanov.calihelper.data.models.User
 import com.georgiyordanov.calihelper.databinding.ActivityCalorieTrackerBinding
 import com.georgiyordanov.calihelper.viewmodels.CalorieTrackerViewModel
 import com.georgiyordanov.calihelper.viewmodels.FoodSearchViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 @RequiresApi(Build.VERSION_CODES.O)
@@ -48,7 +49,7 @@ class CalorieTrackerActivity : BasicActivity() {
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
         }
 
-        // 2) Food‑search dropdown
+        // 2) Food-search dropdown
         suggestionsAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_dropdown_item_1line,
@@ -56,7 +57,7 @@ class CalorieTrackerActivity : BasicActivity() {
         )
         binding.autoCompleteSearch.setAdapter(suggestionsAdapter)
 
-        // 3) Food‑log RecyclerView
+        // 3) Food-log RecyclerView
         foodItemAdapter = FoodItemAdapter()
         binding.rvFoodItems.apply {
             layoutManager = LinearLayoutManager(this@CalorieTrackerActivity)
@@ -99,7 +100,7 @@ class CalorieTrackerActivity : BasicActivity() {
     }
 
     private fun setupListeners() {
-        // As‑you‑type search
+        // As-you-type search
         binding.autoCompleteSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -109,7 +110,7 @@ class CalorieTrackerActivity : BasicActivity() {
             }
         })
 
-        // On‑select → go to details
+        // On-select → go to details
         binding.autoCompleteSearch.setOnItemClickListener { parent, _, pos, _ ->
             val name = parent.getItemAtPosition(pos) as String
             commonFoodMap[name]?.let { food ->
@@ -117,19 +118,26 @@ class CalorieTrackerActivity : BasicActivity() {
                 binding.autoCompleteSearch.isEnabled = false
                 binding.progressBar.visibility = View.VISIBLE
 
-                // 2) launch details screen
-                startActivity(Intent(this, FoodDetailActivity::class.java).apply {
-                    putExtra("selectedFood", food)
-                    putExtra("logDocId", calorieTrackerViewModel.currentLogDocumentId)
-                })
+                // 2) grab the actual String value out of your LiveData
+                val docId = calorieTrackerViewModel.currentLogDocumentId.value
+                if (docId == null) {
+                    Toast.makeText(this, "Log not ready yet", Toast.LENGTH_SHORT).show()
+                    binding.progressBar.visibility = View.GONE
+                    binding.autoCompleteSearch.isEnabled = true
+                    return@setOnItemClickListener
+                }
 
-                // 3) if you want to immediately clear the spinner here:
-                // (the new Activity will cover this one)
+                // 3) launch details screen, passing Serializable + String
+                Intent(this, FoodDetailActivity::class.java).apply {
+                    putExtra("selectedFood", food)
+                    putExtra("logDocId", docId)
+                }.also { startActivity(it) }
+
+                // 4) cleanup UI
                 binding.progressBar.visibility = View.GONE
                 binding.autoCompleteSearch.isEnabled = true
             } ?: Toast.makeText(this, "Food details not found", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     /** Fetch the user’s profile, compute maintenance cals, and show it. */
@@ -161,17 +169,17 @@ class CalorieTrackerActivity : BasicActivity() {
                         append("Based on your stats, your maintenance calories are approx. ")
                         append("$mCal kcal/day.\n\n")
                         append("Example activities burned:\n")
-                        append("• Running (15 min): ~150 kcal\n")
-                        append("• Brisk walking (30 min): ~120 kcal\n")
-                        append("• Cycling (30 min): ~250 kcal\n")
-                        append("• Swimming (30 min): ~200 kcal")
+                        append("• Running (15 min): ~150 kcal\n")
+                        append("• Brisk walking (30 min): ~120 kcal\n")
+                        append("• Cycling (30 min): ~250 kcal\n")
+                        append("• Swimming (30 min): ~200 kcal")
                     }
                 }
             }
         }
     }
 
-    /** Mifflin–St Jeor formula × activity factor (default = lightly‑active 1.375). */
+    /** Mifflin–St Jeor formula × activity factor (default = lightly-active 1.375). */
     private fun calculateMaintenance(
         gender: Gender,
         weightKg: Float,
