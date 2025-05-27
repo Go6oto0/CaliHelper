@@ -10,79 +10,45 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class UserViewModel : ViewModel() {
-
-    private val userRepository = UserRepository()
+@HiltViewModel
+class UserViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val firestore: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
+) : ViewModel() {
 
     private val _userState = MutableStateFlow<UserState>(UserState.Idle)
-    val userState: StateFlow<UserState> = _userState
+    val userState: StateFlow<UserState> = _userState.asStateFlow()
 
     fun createUser(user: User) {
         viewModelScope.launch {
             _userState.value = UserState.Loading
-            try {
+            runCatching {
                 userRepository.create(user)
+            }.onSuccess {
                 _userState.value = UserState.Success
-            } catch (e: Exception) {
-                _userState.value = UserState.Error(e.message)
+            }.onFailure {
+                _userState.value = UserState.Error(it.message)
             }
         }
     }
-    fun cascadeDeleteUserData(userId: String, onComplete: (Throwable?) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val batch: WriteBatch = db.batch()
 
-                // 1) delete the user doc itself
-                batch.delete(db.collection("users").document(userId))
-
-                // 2) delete calorieLogs
-                val calLogs = db.collection("calorieLogs")
-                    .whereEqualTo("userId", userId)
-                    .get().await()
-                calLogs.documents.forEach { batch.delete(it.reference) }
-
-                // 3) delete workoutPlans AND their exercises
-                val plansSnap = db.collection("workoutPlans")
-                    .whereEqualTo("userId", userId)
-                    .get().await()
-                for (planDoc in plansSnap.documents) {
-                    // delete the plan
-                    batch.delete(planDoc.reference)
-                    // delete exercises under this plan
-                    val exSnap = db.collection("workoutExercises")
-                        .whereEqualTo("workoutPlanId", planDoc.id)
-                        .get().await()
-                    exSnap.documents.forEach { batch.delete(it.reference) }
-                }
-
-                // 4) delete foodItems
-                val itemsSnap = db.collection("foodItems")
-                    .whereEqualTo("userId", userId)
-                    .get().await()
-                itemsSnap.documents.forEach { batch.delete(it.reference) }
-
-                // commit it all
-                batch.commit().await()
-                onComplete(null)
-            } catch (e: Throwable) {
-                onComplete(e)
-            }
-        }
-    }
     fun readUser(id: String) {
         viewModelScope.launch {
             _userState.value = UserState.Loading
-            try {
-                val user = userRepository.read(id)
+            runCatching {
+                userRepository.read(id)
+            }.onSuccess { user ->
                 _userState.value = UserState.UserData(user)
-            } catch (e: Exception) {
-                _userState.value = UserState.Error(e.message)
+            }.onFailure {
+                _userState.value = UserState.Error(it.message)
             }
         }
     }
@@ -90,11 +56,12 @@ class UserViewModel : ViewModel() {
     fun readAllUsers() {
         viewModelScope.launch {
             _userState.value = UserState.Loading
-            try {
-                val users = userRepository.readAll()
-                _userState.value = UserState.UsersList(users)
-            } catch (e: Exception) {
-                _userState.value = UserState.Error(e.message)
+            runCatching {
+                userRepository.readAll()
+            }.onSuccess { list ->
+                _userState.value = UserState.UsersList(list)
+            }.onFailure {
+                _userState.value = UserState.Error(it.message)
             }
         }
     }
@@ -102,66 +69,100 @@ class UserViewModel : ViewModel() {
     fun updateUser(id: String, updates: Map<String, Any?>) {
         viewModelScope.launch {
             _userState.value = UserState.Loading
-            try {
+            runCatching {
                 userRepository.update(id, updates)
+            }.onSuccess {
                 _userState.value = UserState.Success
-            } catch (e: Exception) {
-                _userState.value = UserState.Error(e.message)
+            }.onFailure {
+                _userState.value = UserState.Error(it.message)
             }
         }
     }
-    fun isProfileComplete(user: User): Boolean {
-        return !user.userName.isNullOrEmpty() &&
-                user.weight != null &&
-                user.height != null &&
-                user.age != null &&
-                !user.goal.isNullOrEmpty()
-    }
-    fun checkAndUpdateProfileCompleteness(id: String) {
-        viewModelScope.launch {
-            _userState.value = UserState.Loading
-            try {
-                val user = userRepository.read(id)
-                user?.let {
-                    // Check if the profile is complete.
-                    val complete = isProfileComplete(it)
-                    // If it's complete and the flag is not yet set, update the property.
-                    if (complete && !it.profileSetup) {
-                        val updates = mapOf("profileSetup" to true)
-                        userRepository.update(id, updates)
-                        // Optionally update local state or re-read the user.
-                    }
-                }
-                _userState.value = UserState.Success
-            } catch (e: Exception) {
-                _userState.value = UserState.Error(e.message)
-            }
-        }
-    }
-
 
     fun deleteUser(id: String) {
         viewModelScope.launch {
             _userState.value = UserState.Loading
-            try {
+            runCatching {
                 userRepository.delete(id)
+            }.onSuccess {
                 _userState.value = UserState.Success
-            } catch (e: Exception) {
-                _userState.value = UserState.Error(e.message)
+            }.onFailure {
+                _userState.value = UserState.Error(it.message)
             }
         }
     }
-    suspend fun isCurrentUserProfileSetup(): Boolean {
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
-        return if (firebaseUser != null) {
+
+    fun cascadeDeleteUserData(userId: String, onComplete: (Throwable?) -> Unit) {
+        // Use viewModelScope so Hilt disposes properly
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                // Retrieve the user record from your database using the Firebase user's UID.
-                val user: User? = userRepository.read(firebaseUser.uid)
-                // Check the user's isProfileSetup property. If the user record is not found, assume false.
-                user?.profileSetup ?: false
-            } catch (e: Exception) {
-                false
+                val batch: WriteBatch = firestore.batch()
+
+                // 1) delete the user doc
+                batch.delete(firestore.collection("users").document(userId))
+
+                // 2) delete calorieLogs
+                val calLogs = firestore.collection("calorieLogs")
+                    .whereEqualTo("userId", userId)
+                    .get().await()
+                calLogs.documents.forEach { batch.delete(it.reference) }
+
+                // 3) delete workoutPlans + exercises
+                val plans = firestore.collection("workoutPlans")
+                    .whereEqualTo("userId", userId)
+                    .get().await()
+                for (plan in plans.documents) {
+                    batch.delete(plan.reference)
+                    val exs = firestore.collection("workoutExercises")
+                        .whereEqualTo("workoutPlanId", plan.id)
+                        .get().await()
+                    exs.documents.forEach { batch.delete(it.reference) }
+                }
+
+                // 4) delete foodItems
+                val items = firestore.collection("foodItems")
+                    .whereEqualTo("userId", userId)
+                    .get().await()
+                items.documents.forEach { batch.delete(it.reference) }
+
+                // commit batch
+                batch.commit().await()
+                onComplete(null)
+            } catch (t: Throwable) {
+                onComplete(t)
             }
+        }
+    }
+
+    fun checkAndUpdateProfileCompleteness(id: String) {
+        viewModelScope.launch {
+            _userState.value = UserState.Loading
+            runCatching {
+                val user = userRepository.read(id)
+                if (user != null && isProfileComplete(user) && !user.profileSetup) {
+                    userRepository.update(id, mapOf("profileSetup" to true))
+                }
+            }.onSuccess {
+                _userState.value = UserState.Success
+            }.onFailure {
+                _userState.value = UserState.Error(it.message)
+            }
+        }
+    }
+
+    private fun isProfileComplete(user: User): Boolean =
+        !user.userName.isNullOrEmpty() &&
+                user.weight  != null &&
+                user.height  != null &&
+                user.age     != null &&
+                !user.goal.isNullOrEmpty()
+
+    suspend fun isCurrentUserProfileSetup(): Boolean {
+        val firebaseUser = firebaseAuth.currentUser
+        return if (firebaseUser != null) {
+            runCatching {
+                userRepository.read(firebaseUser.uid)?.profileSetup ?: false
+            }.getOrDefault(false)
         } else {
             false
         }

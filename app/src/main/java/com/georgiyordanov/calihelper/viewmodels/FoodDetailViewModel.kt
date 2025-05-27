@@ -1,5 +1,7 @@
+// FoodDetailViewModel.kt
 package com.georgiyordanov.calihelper.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,17 +9,20 @@ import androidx.lifecycle.viewModelScope
 import com.georgiyordanov.calihelper.data.models.CommonFood
 import com.georgiyordanov.calihelper.data.models.FoodDetail
 import com.georgiyordanov.calihelper.data.models.FoodItem
-import com.georgiyordanov.calihelper.data.models.NutrientRequest
 import com.georgiyordanov.calihelper.data.repository.FoodItemRepository
-import com.georgiyordanov.calihelper.network.NutritionixRetrofitInstance
+import com.georgiyordanov.calihelper.network.NutritionixApiService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FoodDetailViewModel : ViewModel() {
+@HiltViewModel
+class FoodDetailViewModel @Inject constructor(
+    private val api: NutritionixApiService,
+    private val foodItemRepository: FoodItemRepository
+) : ViewModel() {
 
     private val _nutrientDetails = MutableLiveData<FoodDetail?>()
     val nutrientDetails: LiveData<FoodDetail?> = _nutrientDetails
-
-    private val foodItemRepository = FoodItemRepository()  // assuming you have this repository
 
     /**
      * Recalculates nutrient details using the nutrient endpoint.
@@ -26,18 +31,18 @@ class FoodDetailViewModel : ViewModel() {
         val queryString = "$customServing ${food.serving_unit} ${food.food_name}"
         viewModelScope.launch {
             try {
-                val response = NutritionixRetrofitInstance.api.getNutrientInfo(
-                    NutrientRequest(query = queryString)
+                val response = api.getNutrientInfo(
+                    com.georgiyordanov.calihelper.data.models.NutrientRequest(query = queryString)
                 )
                 if (response.isSuccessful) {
-                    val detail = response.body()?.foods?.firstOrNull()
-                    _nutrientDetails.postValue(detail)
+                    _nutrientDetails.value = response.body()?.foods?.firstOrNull()
                 } else {
-                    _nutrientDetails.postValue(null)
+                    Log.e("FoodDetailVM", "API error: ${response.errorBody()?.string()}")
+                    _nutrientDetails.value = null
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
-                _nutrientDetails.postValue(null)
+                Log.e("FoodDetailVM", "Exception during API call", e)
+                _nutrientDetails.value = null
             }
         }
     }
@@ -47,26 +52,19 @@ class FoodDetailViewModel : ViewModel() {
      * and persists it using the FoodItemRepository.
      */
     fun addFoodItemToLog(food: CommonFood, nutrient: FoodDetail) {
-        val foodItem = FoodItem(
-            name = food.food_name,
-            calories = nutrient.nf_calories.toInt(),
-            servingSize = "${nutrient.serving_qty} ${nutrient.serving_unit}",
-            protein = nutrient.nf_protein.toFloat(),
-            fat = nutrient.nf_total_fat.toFloat(),
-            carbohydrates = nutrient.nf_total_carbohydrate.toFloat()
-        )
-
+        val foodItem = createFoodItem(food, nutrient)
         viewModelScope.launch {
             try {
-                // Call your repository to persist the FoodItem.
-                // You can also add further logic to update your local CalorieLog if needed.
                 foodItemRepository.create(foodItem)
-                // Optionally, post a success value using LiveData or notify via other means.
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("FoodDetailVM", "Failed to save FoodItem", e)
             }
         }
     }
+
+    /**
+     * Pure function to build a FoodItem from API models.
+     */
     fun createFoodItem(food: CommonFood, nutrient: FoodDetail): FoodItem {
         return FoodItem(
             name = food.food_name,

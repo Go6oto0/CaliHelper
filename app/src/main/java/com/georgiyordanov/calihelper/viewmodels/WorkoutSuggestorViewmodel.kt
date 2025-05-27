@@ -1,6 +1,6 @@
 package com.georgiyordanov.calihelper.viewmodels
 
-import androidx.lifecycle.ViewModel
+/*import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.georgiyordanov.calihelper.data.models.ExerciseName
 import com.georgiyordanov.calihelper.data.models.WorkoutPlan
@@ -31,4 +31,4 @@ class WorkoutSuggestorViewModel : ViewModel() {
             _suggestions.value = repo.fetchSuggestions(type)
         }
     }
-}
+}*/

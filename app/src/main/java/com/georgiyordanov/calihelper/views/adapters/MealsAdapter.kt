@@ -9,10 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.georgiyordanov.calihelper.R
 import com.georgiyordanov.calihelper.data.models.Meal
 import com.georgiyordanov.calihelper.views.MealDetailActivity
+import javax.inject.Inject
 
-class MealsAdapter(private var meals: List<Meal>) :
+class MealsAdapter @Inject constructor() :
     RecyclerView.Adapter<MealsAdapter.ViewHolder>() {
 
+    // start with an empty list
+    private var meals: List<Meal> = emptyList()
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvName: TextView = view.findViewById(R.id.tvMealName)
         val tvDesc: TextView = view.findViewById(R.id.tvMealDescription)

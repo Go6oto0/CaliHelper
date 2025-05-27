@@ -1,5 +1,6 @@
 package com.georgiyordanov.calihelper.data.models
 
+import android.os.Parcelable
 import java.io.Serializable
 
 data class FoodSearchResponse(

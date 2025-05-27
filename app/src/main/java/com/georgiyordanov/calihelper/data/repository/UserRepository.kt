@@ -1,68 +1,104 @@
 package com.georgiyordanov.calihelper.data.repository
+
 import android.util.Log
 import com.georgiyordanov.calihelper.data.models.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
+class UserRepository @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
+) : IRepository<User> {
 
-class UserRepository : IRepository<User> {
-    private var db = FirebaseFirestore.getInstance()
-    private var usersCollection = db.collection("users")
-    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val usersCollection: CollectionReference
+        get() = firestore.collection("users")
+
+    /**
+     * Creates or overwrites a user document with the given entity.
+     */
     override suspend fun create(entity: User) {
         try {
-            Log.d("ENTITY_IN_CREATE", entity.toString())
-            Log.d("CREATE_CALLER", entity.toString(), Throwable("Stack trace"))
-            val documentRef = usersCollection.document(entity.uid)
-            documentRef.set(entity).await()
+            Log.d("UserRepository", "Creating user: $entity")
+            usersCollection
+                .document(entity.uid)
+                .set(entity)
+                .await()
         } catch (e: Exception) {
-            e.printStackTrace()
-            throw e // Propagate the exception to the caller
+            Log.e("UserRepository", "create() failed", e)
+            throw e
         }
     }
 
+    /**
+     * Reads a user by UID. Returns null if not found.
+     */
     override suspend fun read(id: String): User? {
         return try {
-            val document = usersCollection.document(id).get().await()
-            if (document.exists()) {
-                document.toObject(User::class.java)
+            val snap = usersCollection.document(id).get().await()
+            if (snap.exists()) {
+                snap.toObject(User::class.java)
             } else {
+                Log.w("UserRepository", "read(): user $id not found")
                 null
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-            throw e // Propagate the exception to the caller
+            Log.e("UserRepository", "read() failed", e)
+            throw e
         }
     }
 
+    /**
+     * Reads all users. May return empty list.
+     */
     override suspend fun readAll(): List<User>? {
         return try {
-            val snapshot = usersCollection.get().await()
-            snapshot.toObjects(User::class.java)
+            usersCollection.get().await()
+                .toObjects(User::class.java)
         } catch (e: Exception) {
-            e.printStackTrace()
-            throw e // Propagate the exception to the caller
+            Log.e("UserRepository", "readAll() failed", e)
+            throw e
         }
     }
 
+    /**
+     * Merges the provided fields into the existing user document.
+     */
     override suspend fun update(id: String, updates: Map<String, Any?>) {
         try {
-            usersCollection.document(id).set(updates, SetOptions.merge()).await()
+            usersCollection
+                .document(id)
+                .set(updates, SetOptions.merge())
+                .await()
         } catch (e: Exception) {
-            e.printStackTrace()
-            throw e // Propagate the exception to the caller
+            Log.e("UserRepository", "update() failed", e)
+            throw e
         }
     }
 
+    /**
+     * Deletes a user document by UID.
+     */
     override suspend fun delete(id: String) {
         try {
-            usersCollection.document(id).delete().await()
+            usersCollection
+                .document(id)
+                .delete()
+                .await()
         } catch (e: Exception) {
-            e.printStackTrace()
-            throw e // Propagate the exception to the caller
+            Log.e("UserRepository", "delete() failed", e)
+            throw e
         }
     }
 
+    /**
+     * Returns the currently authenticated user's UID, or null if none.
+     */
+    fun currentUserId(): String? =
+        firebaseAuth.currentUser?.uid
 }

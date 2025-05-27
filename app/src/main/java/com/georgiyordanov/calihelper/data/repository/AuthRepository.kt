@@ -4,12 +4,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AuthRepository {
-    private val firebaseAuth = FirebaseAuth.getInstance()
+@Singleton
+class AuthRepository @Inject constructor(
+    private val firebaseAuth: FirebaseAuth
+) {
     suspend fun signUp(email: String, password: String): Result<FirebaseUser> {
         return try {
-            // This suspend‑awaits the Firebase create call
             val authResult = firebaseAuth
                 .createUserWithEmailAndPassword(email, password)
                 .await()
@@ -33,5 +36,9 @@ class AuthRepository {
             Result.failure(e)
         }
     }
-    fun getCurrentUser() = firebaseAuth.currentUser
+
+    fun getCurrentUser(): FirebaseUser? =
+        firebaseAuth.currentUser
+
+    fun signOut() = firebaseAuth.signOut()
 }

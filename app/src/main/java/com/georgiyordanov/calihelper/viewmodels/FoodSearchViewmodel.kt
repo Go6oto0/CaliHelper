@@ -6,31 +6,34 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.georgiyordanov.calihelper.data.models.CommonFood
-import com.georgiyordanov.calihelper.network.NutritionixRetrofitInstance
+import com.georgiyordanov.calihelper.network.NutritionixApiService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FoodSearchViewModel : ViewModel() {
+@HiltViewModel
+class FoodSearchViewModel @Inject constructor(
+    private val api: NutritionixApiService
+) : ViewModel() {
 
     private val _searchResults = MutableLiveData<List<CommonFood>>()
     val searchResults: LiveData<List<CommonFood>> = _searchResults
 
-
     fun searchFood(query: String) {
         viewModelScope.launch {
             try {
-                Log.d("FoodSearch", "Searching for: $query")
-                val response = NutritionixRetrofitInstance.api.searchFood(query)
-                Log.d("FoodSearch", "Response code: ${response.code()}")
+                Log.d("FoodSearchVM", "Searching for: $query")
+                val response = api.searchFood(query)
+                Log.d("FoodSearchVM", "Response code: ${response.code()}")
                 if (response.isSuccessful) {
-                    val body = response.body()
-                    Log.d("FoodSearch", "Received ${body?.common?.size ?: 0} common items")
-                    _searchResults.value = body?.common ?: emptyList()
+                    _searchResults.value = response.body()?.common.orEmpty()
                 } else {
-                    Log.e("FoodSearch", "API call unsuccessful: ${response.errorBody()?.string()}")
+                    Log.e("FoodSearchVM", "API error: ${response.errorBody()?.string()}")
                     _searchResults.value = emptyList()
                 }
             } catch (e: Exception) {
-                Log.e("FoodSearch", "Exception during API call", e)
+                Log.e("FoodSearchVM", "Exception during API call", e)
+                _searchResults.value = emptyList()
             }
         }
     }

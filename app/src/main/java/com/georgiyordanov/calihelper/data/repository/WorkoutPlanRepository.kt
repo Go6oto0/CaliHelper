@@ -1,50 +1,57 @@
+// WorkoutPlanRepository.kt
 package com.georgiyordanov.calihelper.data.repository
 
 import android.util.Log
 import com.georgiyordanov.calihelper.data.models.WorkoutPlan
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class WorkoutPlanRepository : IRepository<WorkoutPlan> {
-    private val db = FirebaseFirestore.getInstance()
-    private val workoutPlansCollection = db.collection("workoutPlans")
+@Singleton
+class WorkoutPlanRepository @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : IRepository<WorkoutPlan> {
+
+    private val workoutPlansCollection: CollectionReference
+        get() = firestore.collection("workoutPlans")
 
     override suspend fun create(entity: WorkoutPlan) {
         try {
-            // If the entity does not already have an id, generate one:
-            val documentRef = if (entity.id.isBlank()) {
+            val docRef = if (entity.id.isBlank()) {
                 workoutPlansCollection.document()
             } else {
                 workoutPlansCollection.document(entity.id)
             }
-            // Copy the entity with the generated id if needed.
-            val updatedEntity = if (entity.id.isBlank()) {
-                entity.copy(id = documentRef.id)
+            val updated = if (entity.id.isBlank()) {
+                entity.copy(id = docRef.id)
             } else {
                 entity
             }
-            documentRef.set(updatedEntity).await()
+            docRef.set(updated).await()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("WorkoutPlanRepo", "create failed", e)
             throw e
         }
     }
 
-
-    // Inside WorkoutPlanRepository (pseudo-code)
     override suspend fun read(workoutId: String): WorkoutPlan? {
-        val document = db.collection("workoutPlans").document(workoutId).get().await()
-        Log.d("WorkoutPlanRepository", "Document for $workoutId exists: ${document.exists()}")
-        return if (document.exists()) document.toObject(WorkoutPlan::class.java) else null
+        return try {
+            val snap = workoutPlansCollection.document(workoutId).get().await()
+            Log.d("WorkoutPlanRepo", "exists=$${snap.exists()}")
+            snap.toObject(WorkoutPlan::class.java)
+        } catch (e: Exception) {
+            Log.e("WorkoutPlanRepo", "read failed", e)
+            throw e
+        }
     }
-
 
     override suspend fun readAll(): List<WorkoutPlan>? {
         return try {
-            val snapshot = workoutPlansCollection.get().await()
-            snapshot.toObjects(WorkoutPlan::class.java)
+            workoutPlansCollection.get().await().toObjects(WorkoutPlan::class.java)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("WorkoutPlanRepo", "readAll failed", e)
             throw e
         }
     }
@@ -53,7 +60,7 @@ class WorkoutPlanRepository : IRepository<WorkoutPlan> {
         try {
             workoutPlansCollection.document(id).update(updates).await()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("WorkoutPlanRepo", "update failed", e)
             throw e
         }
     }
@@ -62,7 +69,7 @@ class WorkoutPlanRepository : IRepository<WorkoutPlan> {
         try {
             workoutPlansCollection.document(id).delete().await()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("WorkoutPlanRepo", "delete failed", e)
             throw e
         }
     }

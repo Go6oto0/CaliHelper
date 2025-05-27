@@ -1,3 +1,4 @@
+// AuthViewModel.kt
 package com.georgiyordanov.calihelper.viewmodels
 
 import android.util.Log
@@ -6,79 +7,65 @@ import androidx.lifecycle.viewModelScope
 import com.georgiyordanov.calihelper.data.models.User
 import com.georgiyordanov.calihelper.data.repository.AuthRepository
 import com.georgiyordanov.calihelper.data.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.google.firebase.auth.FirebaseAuth
+import javax.inject.Inject
 
-class AuthViewModel : ViewModel() {
-    private val authRepository = AuthRepository()
-    private val userRepository = UserRepository()
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
-    val authState: StateFlow<AuthState> = _authState
+    val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     fun signUp(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-
-            val result = authRepository.signUp(email, password)
-            if (result.isSuccess) {
-                val fbUser = result.getOrNull()!!
-                val appUser = User(
-                    uid = fbUser.uid,
-                    email = fbUser.email,       // non-null after successful sign-up
-                    profileSetup = false
-                )
-
-                try {
-                    Log.d("APPUSER_BEFORE_CREATE", appUser.toString())
-                    userRepository.create(appUser)    // full write
-                    _authState.value = AuthState.Success
-                } catch (e: Exception) {
-                    _authState.value = AuthState.Error(e.message)
+            authRepository.signUp(email, password)
+                .onSuccess { fbUser ->
+                    val appUser = User(
+                        uid = fbUser.uid,
+                        email = fbUser.email!!,
+                        profileSetup = false
+                    )
+                    runCatching {
+                        Log.d("AuthViewModel", "Creating app user: $appUser")
+                        userRepository.create(appUser)
+                    }.fold(
+                        onSuccess = { _authState.value = AuthState.Success },
+                        onFailure = { _authState.value = AuthState.Error(it.message) }
+                    )
                 }
-            } else {
-                _authState.value = AuthState.Error(result.exceptionOrNull()?.message)
-            }
+                .onFailure { _authState.value = AuthState.Error(it.message) }
         }
     }
 
-
-
-
-    // AuthViewModel.kt
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-
-            // Call the suspend function and get a Result<Unit>
-            val result = authRepository.signIn(email, password)
-
-            if (result.isSuccess) {
-                // credentials were correct
-                _authState.value = AuthState.Success
-            } else {
-                // credentials failed: get the exception message
-                val message = result.exceptionOrNull()?.message
-                    ?: "Unknown login error"
-                _authState.value = AuthState.Error(message)
-            }
+            authRepository.signIn(email, password)
+                .onSuccess { _authState.value = AuthState.Success }
+                .onFailure { _authState.value = AuthState.Error(it.message) }
         }
     }
 
     fun logout() {
-        FirebaseAuth.getInstance().signOut()
-    }
-    fun isUserAdmin(): Boolean {
-        val currentUser = authRepository.getCurrentUser()
-        // Check for a specific email as a simple example.
-        return currentUser?.email?.equals("georgiyordanov_17b@schoolmath.eu", ignoreCase = true) ?: false
+        authRepository.signOut()
+        _authState.value = AuthState.Idle
     }
 
+    fun isUserAdmin(): Boolean =
+        authRepository.getCurrentUser()?.email
+            ?.equals("georgiyordanov_17b@schoolmath.eu", ignoreCase = true)
+            ?: false
 
-
-    fun isUserLoggedIn(): Boolean = authRepository.getCurrentUser() != null
+    fun isUserLoggedIn(): Boolean =
+        authRepository.getCurrentUser() != null
 }
 
 sealed class AuthState {
