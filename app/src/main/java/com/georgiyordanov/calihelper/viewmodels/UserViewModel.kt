@@ -157,16 +157,7 @@ class UserViewModel @Inject constructor(
                 user.age     != null &&
                 !user.goal.isNullOrEmpty()
 
-    suspend fun isCurrentUserProfileSetup(): Boolean {
-        val firebaseUser = firebaseAuth.currentUser
-        return if (firebaseUser != null) {
-            runCatching {
-                userRepository.read(firebaseUser.uid)?.profileSetup ?: false
-            }.getOrDefault(false)
-        } else {
-            false
-        }
-    }
+
 }
 
 sealed class UserState {

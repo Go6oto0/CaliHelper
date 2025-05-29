@@ -16,8 +16,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RegisterActivity : BasicActivity() {
-    // Inherited from BasicActivity:
-    // protected val authViewModel: AuthViewModel by viewModels()
 
     private lateinit var binding: ActivityRegisterBinding
 

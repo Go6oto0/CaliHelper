@@ -49,10 +49,12 @@
     <!-- Search & list below -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/spacing_medium"
         android:layout_marginTop="@dimen/spacing_medium"
+        android:hint="Search food…"
         app:layout_constraintTop_toBottomOf="@id/cardCalorieInfo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -61,9 +63,12 @@
             android:id="@+id/autoCompleteSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search food…"
-            android:padding="@dimen/spacing_small" />
+            android:padding="@dimen/spacing_small"
+            android:inputType="text"
+            android:hint=""
+        />
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFoodItems"

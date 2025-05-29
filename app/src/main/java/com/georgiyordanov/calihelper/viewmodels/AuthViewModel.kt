@@ -58,7 +58,22 @@ class AuthViewModel @Inject constructor(
         authRepository.signOut()
         _authState.value = AuthState.Idle
     }
+    suspend fun getCurrentAppUser(): User? {
+        // grab the Firebase UID
+        val uid = userRepository.currentUserId() ?: return null
+        // read the Firestore user document
+        return userRepository.read(uid)
+    }
 
+    /**
+     * Non-suspend alternative. Fetches current app-user and invokes callback on completion.
+     */
+    fun fetchCurrentAppUser(onResult: (User?) -> Unit) {
+        viewModelScope.launch {
+            val user = getCurrentAppUser()
+            onResult(user)
+        }
+    }
     fun isUserAdmin(): Boolean =
         authRepository.getCurrentUser()?.email
             ?.equals("georgiyordanov_17b@schoolmath.eu", ignoreCase = true)
@@ -66,6 +81,7 @@ class AuthViewModel @Inject constructor(
 
     fun isUserLoggedIn(): Boolean =
         authRepository.getCurrentUser() != null
+
 }
 
 sealed class AuthState {

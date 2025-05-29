@@ -24,7 +24,6 @@ class FoodSearchViewModel @Inject constructor(
             try {
                 Log.d("FoodSearchVM", "Searching for: $query")
                 val response = api.searchFood(query)
-                Log.d("FoodSearchVM", "Response code: ${response.code()}")
                 if (response.isSuccessful) {
                     _searchResults.value = response.body()?.common.orEmpty()
                 } else {

@@ -37,7 +37,6 @@ class FoodDetailViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     _nutrientDetails.value = response.body()?.foods?.firstOrNull()
                 } else {
-                    Log.e("FoodDetailVM", "API error: ${response.errorBody()?.string()}")
                     _nutrientDetails.value = null
                 }
             } catch (e: Exception) {
